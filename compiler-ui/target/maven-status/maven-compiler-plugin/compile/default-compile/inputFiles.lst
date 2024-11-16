@@ -1,0 +1,13 @@
+/home/scarelli/NetBeansProjects/compiler-ui/src/main/java/com/compiler/model/AnalysisError.java
+/home/scarelli/NetBeansProjects/compiler-ui/src/main/java/com/compiler/model/Constants.java
+/home/scarelli/NetBeansProjects/compiler-ui/src/main/java/com/compiler/model/LexicalError.java
+/home/scarelli/NetBeansProjects/compiler-ui/src/main/java/com/compiler/model/Lexico.java
+/home/scarelli/NetBeansProjects/compiler-ui/src/main/java/com/compiler/model/ParserConstants.java
+/home/scarelli/NetBeansProjects/compiler-ui/src/main/java/com/compiler/model/ScannerConstants.java
+/home/scarelli/NetBeansProjects/compiler-ui/src/main/java/com/compiler/model/SemanticError.java
+/home/scarelli/NetBeansProjects/compiler-ui/src/main/java/com/compiler/model/Semantico.java
+/home/scarelli/NetBeansProjects/compiler-ui/src/main/java/com/compiler/model/Sintatico.java
+/home/scarelli/NetBeansProjects/compiler-ui/src/main/java/com/compiler/model/SyntaticError.java
+/home/scarelli/NetBeansProjects/compiler-ui/src/main/java/com/compiler/model/Token.java
+/home/scarelli/NetBeansProjects/compiler-ui/src/main/java/com/compiler/view/MainFrame.java
+/home/scarelli/NetBeansProjects/compiler-ui/src/main/java/com/compiler/view/NumberedBorder.java

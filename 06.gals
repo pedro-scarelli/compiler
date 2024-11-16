@@ -1,0 +1,169 @@
+#Options
+GenerateScanner = true
+GenerateParser = true
+Language = Java
+ScannerName = Lexico
+ParserName = Sintatico
+SemanticName = Semantico
+ScannerCaseSensitive = true
+ScannerTable = Compact
+Input = Stream
+Parser = LL
+#RegularDefinitions
+
+#Tokens
+//Pedro Virissimo Scarelli & Vitor da Silva
+
+pr: [a-z] [a-zA-Z]*
+id:! (i_|f_|b_|s_) ([a-z][A-Z]? | [A-Z]) (([a-z] | [0-9]) [A-Z]?)*
+cte: [1-9] [0-9]* | 0
+cte_2: ([1-9][0-9]* | 0) , [0-9]([0-9]*[1-9])*
+ct: \" ([^\n\"%]*(%x)*)* \"
+
+:! >@ \n [^@]* \n @<
+
+:[\n\s\t]
+
+main = pr : "main"
+read = pr : "read"
+true = pr : "true"
+false = pr : "false"
+write = pr : "write"
+writeln = pr : "writeln"
+if = pr : "if"
+elif = pr : "elif"
+else = pr : "else"
+end = pr : "end"
+repeat = pr : "repeat"
+while = pr : "while"
+until = pr : "until"
+
+"&&"
+"||"
+"!"
+"=="
+"!="
+"<"
+">"
+"+"
+"-"
+"*"
+"/"
+","
+";"
+"="
+"("
+")"
+#NonTerminals
+<program>
+
+<lista_steps>
+<instrucao>
+<lista_id>
+<comando>
+<att>
+<input>
+<lista_input>
+<o_string>
+<output>
+<lista_exp>
+<if>
+<o_elif>
+<o_else>
+<lista_cmd>
+<repeat>
+<lista_exp1>
+
+
+<lista_steps1>
+
+<lista_id1>
+
+<lista_id2>
+
+<lista_input1>
+
+<lista_cmd1>
+
+<repeat1>
+
+<expressao>  
+<expressao1> 
+<elemento> 
+<relacional>
+<relacional1> 
+<operador_relacional>
+<aritmetica>
+<aritmetica1> 
+<termo> 
+<termo1> 
+<fator>
+#Grammar
+<program> ::= main <lista_steps> end ;
+
+<lista_steps> ::= <instrucao>";" <lista_steps1> ;
+
+<lista_steps1> ::= <lista_steps> | î ;
+
+<instrucao> ::= <lista_id> <lista_id1> |<input>|<output>|<if>|<repeat> ;
+
+
+<lista_id> ::= id <lista_id2> ;
+
+<lista_id2> ::= "," <lista_id> | î ;
+
+<lista_id1>  ::= "=" <expressao> | î ;
+
+<comando> ::= <att> |<input>|<output>|<if>|<repeat> ;
+
+<att> ::= <lista_id> "=" <expressao> ;
+
+<input> ::= read "("<lista_input>")" ;
+
+<lista_input> ::= <o_string> id  <lista_input1> ;
+
+<lista_input1> ::=  "," <lista_input> | î ;
+
+<o_string> ::=  î | ct "," ;
+
+<output> ::= write "("<lista_exp>")" | writeln "("<lista_exp>")" ;
+
+<lista_exp> ::= <expressao> <lista_exp1>  ;
+
+<lista_exp1> ::=  "," <lista_exp> | î ;
+
+<if> ::= if <expressao> <lista_cmd> <o_elif> <o_else> end ;
+
+<o_elif> ::= î | elif <expressao> <lista_cmd> <o_elif> ;
+
+<o_else> ::= î | else <lista_cmd> ;
+
+<lista_cmd> ::= <comando>";" <lista_cmd1> ;
+
+<lista_cmd1> ::=  <lista_cmd> | î ;
+
+<repeat> ::= repeat <lista_cmd> <repeat1> ;
+
+<repeat1> ::=  while <expressao> |  until <expressao> ;
+
+<expressao> ::= <elemento> <expressao1> ; 
+<expressao1> ::= î | "&&" <elemento> <expressao1> | "||" <elemento> <expressao1> ; 
+<elemento> ::= <relacional> | true | false | "!" <elemento> ; 
+<relacional> ::= <aritmetica> <relacional1> ; 
+<relacional1> ::= î | <operador_relacional> <aritmetica> ; 
+<operador_relacional>::= "==" | "!=" | "<" | ">" ; 
+<aritmetica> ::= <termo> <aritmetica1> ; 
+<aritmetica1> ::= î | "+" <termo> <aritmetica1> | "-" <termo> <aritmetica1> ; 
+<termo> ::= <fator> <termo1> ; 
+<termo1> ::= î | "*" <fator> <termo1> | "/" <fator> <termo1> ; 
+<fator> ::= id | 
+ cte | 
+ cte_2 | 
+ ct | 
+ "(" <expressao> ")" | 
+ "+" <fator> | 
+ "-" <fator> ; 
+
+
+
+
