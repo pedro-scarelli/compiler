@@ -313,7 +313,7 @@ public class MainFrame extends javax.swing.JFrame {
             terminalTextArea.setText("Erro na linha " + line + " - " + "encontrado " + lexeme + " " + e.getMessage());		
 	} catch ( SemanticError e ) {
             terminalTextArea.setText("Erro semantico");
-            //Trata erros semânticos
+            //Trata erros semï¿½nticos
 	}
     }//GEN-LAST:event_compileCodeBtnActionPerformed
 
@@ -328,7 +328,7 @@ public class MainFrame extends javax.swing.JFrame {
 
                 if (currentFile.exists()) {
                     int confirm = JOptionPane.showConfirmDialog(this,
-                            "O arquivo já existe. Deseja substituir?", "Substituir Arquivo",
+                            "O arquivo jï¿½ existe. Deseja substituir?", "Substituir Arquivo",
                             JOptionPane.YES_NO_OPTION);
                     if (confirm == JOptionPane.NO_OPTION) {
                         return;
