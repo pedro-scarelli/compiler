@@ -1,31 +1,12 @@
 package com.compiler.view;
 
-import com.compiler.model.LexicalError;
-import com.compiler.model.Lexico;
-import com.compiler.model.SemanticError;
-import com.compiler.model.Semantico;
-import com.compiler.model.Sintatico;
-import com.compiler.model.SyntaticError;
+import com.compiler.model.Compiler;
+
+import javax.swing.*;
+import java.io.*;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.ActionMap;
-import javax.swing.Box;
-import javax.swing.InputMap;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.KeyStroke;
 
 public class MainFrame extends javax.swing.JFrame {
     
@@ -68,7 +49,6 @@ public class MainFrame extends javax.swing.JFrame {
         toolBar.add(showTeamBtn);
     }
     
-    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -281,64 +261,48 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void openFileBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openFileBtnActionPerformed
         JFileChooser fileChooser = new JFileChooser();
-        
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        
-        int returnedValue = fileChooser.showOpenDialog(this);
+        var returnedValue = fileChooser.showOpenDialog(this);
         
         if (returnedValue == JFileChooser.APPROVE_OPTION) {
             File selectedFile = fileChooser.getSelectedFile();
             setTextFromFile(selectedFile);
-        } else {
-            System.out.println("Nenhum arquivo selecionado.");
-        }
+            return;
+        } 
+
+        System.out.println("Nenhum arquivo selecionado.");
     }//GEN-LAST:event_openFileBtnActionPerformed
 
     private void compileCodeBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_compileCodeBtnActionPerformed
-        Lexico lexico = new Lexico();
-	Sintatico sintatico = new Sintatico();
-	Semantico semantico = new Semantico();
-
-        lexico.setInput(textArea.getText());
-        try {
-            sintatico.parse(lexico, semantico);
-            terminalTextArea.setText("programa compilado com sucesso");
-	} catch ( LexicalError e ) {
-            var line = getLineFromPosition(e.getPosition());
-            terminalTextArea.setText("Erro na linha " + line + " - " + e.getMessage());
-	} catch ( SyntaticError e ) {
-            var line = getLineFromPosition(e.getPosition());
-            var lexeme = e.getLexeme();
-            lexeme = getErrorCause(e.getPosition(), lexeme);
-            terminalTextArea.setText("Erro na linha " + line + " - " + "encontrado " + lexeme + " " + e.getMessage());		
-	} catch ( SemanticError e ) {
-            terminalTextArea.setText("Erro semantico");
-            //Trata erros semânticos
-	}
+        var compiler = new Compiler(textArea.getText());
+        terminalTextArea.setText(compiler.getResult());
     }//GEN-LAST:event_compileCodeBtnActionPerformed
 
     private void saveFileBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveFileBtnActionPerformed
-        if (currentFile == null) {
-            JFileChooser fileChooser = new JFileChooser();
-            fileChooser.setDialogTitle("Salvar Como");
-            int returnValue = fileChooser.showSaveDialog(this);
+        if (currentFile != null) {
+            saveFileContent();
+            return;
+        }
 
-            if (returnValue == JFileChooser.APPROVE_OPTION) {
-                currentFile = fileChooser.getSelectedFile();
+        var fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Salvar Como");
+        var returnValue = fileChooser.showSaveDialog(this);
+        System.out.println("======================================================================================");
+        System.out.println(returnValue);
+        System.out.println("======================================================================================");
+        if (returnValue == JFileChooser.APPROVE_OPTION) {
+            currentFile = fileChooser.getSelectedFile();
 
-                if (currentFile.exists()) {
-                    int confirm = JOptionPane.showConfirmDialog(this,
-                            "O arquivo já existe. Deseja substituir?", "Substituir Arquivo",
-                            JOptionPane.YES_NO_OPTION);
-                    if (confirm == JOptionPane.NO_OPTION) {
-                        return;
-                    }
+            if (currentFile.exists()) {
+                var confirm = JOptionPane.showConfirmDialog(this,
+                        "O arquivo ja existe. Deseja substituir?", "Substituir Arquivo",
+                        JOptionPane.YES_NO_OPTION);
+                if (confirm == JOptionPane.NO_OPTION) {
+                    return;
                 }
-                
-                fileStatusLabel.setText(currentFile.getAbsolutePath());
-                saveFileContent();
             }
-        } else {
+            
+            fileStatusLabel.setText(currentFile.getAbsolutePath());
             saveFileContent();
         }
 
@@ -433,55 +397,6 @@ public class MainFrame extends javax.swing.JFrame {
         actionMap.put(actionName, action);
     }
     
-    private int getLineFromPosition(int position) {
-        var text = textArea.getText();
-        int line = 1;
-        for (int i = 0; i < position; i++) {
-            if (text.charAt(i) == '\n') {
-                line++;
-            }
-        }
-        return line;
-    }
-    
-    private String getErrorCause(int position, String lexeme) {
-        var trimmedText = textArea.getText().trim();
-        if (position == trimmedText.length()) {
-            return "EOF";
-        } 
-        
-        if(lexeme == null) {
-            lexeme = treatNullLexeme(position, trimmedText);
-        }
-        
-        if(verifyIfLexemeIsString(lexeme)){
-            return "constante_string";
-        }
-        
-        return lexeme;
-    }
-    
-    private boolean verifyIfLexemeIsString(String errorCause) {
-        if(errorCause.charAt(0) == '\"' || errorCause.charAt(0) == '\''){
-            return true;
-        }
-        
-        return false;
-    }
-    
-     private String treatNullLexeme(int position, String text) {    
-        var errorCause = String.valueOf(text.charAt(position));
-        for(int i = position + 1; i < text.length(); i++){
-            if (String.valueOf(text.charAt(i)).equals(" ") || String.valueOf(text.charAt(i)).equals("\n")){
-                break;
-            } else {
-                errorCause += text.charAt(i);
-            }
-        }
-        
-        return errorCause;
-    }
-    
     private void setTextFromFile(File selectedFile) {
         if(verifyIfFileIsTxtFile(selectedFile)) {
             textArea.setText(convertTxtFileToString(selectedFile));
@@ -499,12 +414,12 @@ public class MainFrame extends javax.swing.JFrame {
     
     private void changeCurrentFile(File selectedFile){
         currentFile = selectedFile;
-        String filePath = selectedFile.getAbsolutePath();
+        var filePath = selectedFile.getAbsolutePath();
         fileStatusLabel.setText(filePath);
     }
     
     private String convertTxtFileToString(File selectedFile) {
-        StringBuilder content = new StringBuilder();
+        var content = new StringBuilder();
         String line;
         try (BufferedReader reader = new BufferedReader(new FileReader(selectedFile))) {
             while ((line = reader.readLine()) != null) {

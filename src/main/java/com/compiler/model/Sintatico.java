@@ -4,7 +4,7 @@ import java.util.Stack;
 
 public class Sintatico implements Constants
 {
-    private Stack stack = new Stack();
+    private Stack<Integer> stack = new Stack<>();
     private Token currentToken;
     private Token previousToken;
     private Lexico scanner;
@@ -20,10 +20,10 @@ public class Sintatico implements Constants
         return x >= FIRST_NON_TERMINAL && x < FIRST_SEMANTIC_ACTION;
     }
 
-    private static final boolean isSemanticAction(int x)
-    {
-        return x >= FIRST_SEMANTIC_ACTION;
-    }
+    // private static final boolean isSemanticAction(int x)
+    // {
+    //     return x >= FIRST_SEMANTIC_ACTION;
+    // }
 
     private boolean step() throws LexicalError, SyntaticError, SemanticError
     {
@@ -85,7 +85,7 @@ public class Sintatico implements Constants
             //empilha a produção em ordem reversa
             for (int i=production.length-1; i>=0; i--)
             {
-                stack.push(new Integer(production[i]));
+                stack.push(Integer.valueOf(production[i]));
             }
             return true;
         }
@@ -99,8 +99,8 @@ public class Sintatico implements Constants
         this.semanticAnalyser = semanticAnalyser;
 
         stack.clear();
-        stack.push(new Integer(DOLLAR));
-        stack.push(new Integer(START_SYMBOL));
+        stack.push(Integer.valueOf(DOLLAR));
+        stack.push(Integer.valueOf(START_SYMBOL));
 
         currentToken = scanner.nextToken();
 
