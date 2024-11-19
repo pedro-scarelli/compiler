@@ -2,9 +2,10 @@ com/compiler/model/Token.class
 com/compiler/view/MainFrame$5.class
 com/compiler/model/Sintatico.class
 com/compiler/model/Semantico.class
-com/compiler/model/Lexico.class
 com/compiler/model/SyntaticError.class
+com/compiler/model/Lexico.class
 com/compiler/view/MainFrame.class
+com/compiler/model/Compiler.class
 com/compiler/view/MainFrame$2.class
 com/compiler/model/ParserConstants.class
 com/compiler/model/ScannerConstants.class

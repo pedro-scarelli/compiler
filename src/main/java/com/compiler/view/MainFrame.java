@@ -285,27 +285,11 @@ public class MainFrame extends javax.swing.JFrame {
         }
 
         var fileChooser = new JFileChooser();
-        fileChooser.setDialogTitle("Salvar Como");
-        var returnValue = fileChooser.showSaveDialog(this);
-        System.out.println("======================================================================================");
-        System.out.println(returnValue);
-        System.out.println("======================================================================================");
+        var returnValue = askSaveHow(fileChooser);
+
         if (returnValue == JFileChooser.APPROVE_OPTION) {
-            currentFile = fileChooser.getSelectedFile();
-
-            if (currentFile.exists()) {
-                var confirm = JOptionPane.showConfirmDialog(this,
-                        "O arquivo ja existe. Deseja substituir?", "Substituir Arquivo",
-                        JOptionPane.YES_NO_OPTION);
-                if (confirm == JOptionPane.NO_OPTION) {
-                    return;
-                }
-            }
-            
-            fileStatusLabel.setText(currentFile.getAbsolutePath());
-            saveFileContent();
+            getFileAndUpdateFileStatus(fileChooser);
         }
-
         terminalTextArea.setText("");
     }//GEN-LAST:event_saveFileBtnActionPerformed
 
@@ -357,6 +341,25 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JToolBar toolBar;
     // End of variables declaration//GEN-END:variables
 
+    private void getFileAndUpdateFileStatus(JFileChooser fileChooser) {
+        currentFile = fileChooser.getSelectedFile();
+
+        if (currentFile.exists()) {
+            replaceFileOrCancelSave();
+        } 
+    }
+
+    private void replaceFileOrCancelSave() {
+        var confirm = JOptionPane.showConfirmDialog(this,
+        "O arquivo ja existe. Deseja substituir?", "Substituir Arquivo",
+        JOptionPane.YES_NO_OPTION);
+        
+        if (confirm == JOptionPane.NO_OPTION) return;
+
+        fileStatusLabel.setText(currentFile.getAbsolutePath());
+        saveFileContent();
+    }
+
     private void saveFileContent() {
         if (currentFile != null) {
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(currentFile))) {
@@ -368,6 +371,11 @@ public class MainFrame extends javax.swing.JFrame {
                                               "Erro", JOptionPane.ERROR_MESSAGE);
             }
         }
+    }
+
+    public int askSaveHow(JFileChooser fileChooser) {
+        fileChooser.setDialogTitle("Salvar Como");
+        return fileChooser.showSaveDialog(this);
     }
     
     private void configureShortcuts() {
