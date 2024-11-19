@@ -1,0 +1,13 @@
+/mnt/c/Users/scarelli/Documents/github/compilador/compiler/src/main/java/com/compiler/model/Lexico.java
+/mnt/c/Users/scarelli/Documents/github/compilador/compiler/src/main/java/com/compiler/model/SemanticError.java
+/mnt/c/Users/scarelli/Documents/github/compilador/compiler/src/main/java/com/compiler/model/AnalysisError.java
+/mnt/c/Users/scarelli/Documents/github/compilador/compiler/src/main/java/com/compiler/model/ParserConstants.java
+/mnt/c/Users/scarelli/Documents/github/compilador/compiler/src/main/java/com/compiler/model/Token.java
+/mnt/c/Users/scarelli/Documents/github/compilador/compiler/src/main/java/com/compiler/model/SyntaticError.java
+/mnt/c/Users/scarelli/Documents/github/compilador/compiler/src/main/java/com/compiler/view/NumberedBorder.java
+/mnt/c/Users/scarelli/Documents/github/compilador/compiler/src/main/java/com/compiler/model/Semantico.java
+/mnt/c/Users/scarelli/Documents/github/compilador/compiler/src/main/java/com/compiler/model/Sintatico.java
+/mnt/c/Users/scarelli/Documents/github/compilador/compiler/src/main/java/com/compiler/view/MainFrame.java
+/mnt/c/Users/scarelli/Documents/github/compilador/compiler/src/main/java/com/compiler/model/Constants.java
+/mnt/c/Users/scarelli/Documents/github/compilador/compiler/src/main/java/com/compiler/model/ScannerConstants.java
+/mnt/c/Users/scarelli/Documents/github/compilador/compiler/src/main/java/com/compiler/model/LexicalError.java

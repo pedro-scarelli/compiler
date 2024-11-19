@@ -7,7 +7,7 @@ ParserName = Sintatico
 SemanticName = Semantico
 ScannerCaseSensitive = true
 ScannerTable = Compact
-Input = Stream
+Input = String
 Parser = LL
 #RegularDefinitions
 
@@ -99,7 +99,7 @@ until = pr : "until"
 <termo1> 
 <fator>
 #Grammar
-<program> ::= main <lista_steps> end ;
+<program> ::= #100 main <lista_steps> end #101 ;
 
 <lista_steps> ::= <instrucao>";" <lista_steps1> ;
 
@@ -108,33 +108,33 @@ until = pr : "until"
 <instrucao> ::= <lista_id> <lista_id1> |<input>|<output>|<if>|<repeat> ;
 
 
-<lista_id> ::= id <lista_id2> ;
+<lista_id> ::= id #104 <lista_id2> ;
 
 <lista_id2> ::= "," <lista_id> | î ;
 
-<lista_id1>  ::= "=" <expressao> | î ;
+<lista_id1>  ::= "=" <expressao> #103 | #102 î ;
 
 <comando> ::= <att> |<input>|<output>|<if>|<repeat> ;
 
-<att> ::= <lista_id> "=" <expressao> ;
+<att> ::= <lista_id> "=" <expressao> #103 ;
 
 <input> ::= read "("<lista_input>")" ;
 
-<lista_input> ::= <o_string> id  <lista_input1> ;
+<lista_input> ::= <o_string> id #105 <lista_input1> ;
 
 <lista_input1> ::=  "," <lista_input> | î ;
 
-<o_string> ::=  î | ct "," ;
+<o_string> ::=  î | ct #106 "," ;
 
-<output> ::= write "("<lista_exp>")" | writeln "("<lista_exp>")" ;
+<output> ::= write "("<lista_exp>")" | writeln "("<lista_exp>")" #107 ;
 
-<lista_exp> ::= <expressao> <lista_exp1>  ;
+<lista_exp> ::= <expressao>  #108 <lista_exp1>  ;
 
 <lista_exp1> ::=  "," <lista_exp> | î ;
 
-<if> ::= if <expressao> <lista_cmd> <o_elif> <o_else> end ;
+<if> ::= if <expressao> #109 <lista_cmd> <o_elif> #110 <o_else> #111 end ;
 
-<o_elif> ::= î | elif <expressao> <lista_cmd> <o_elif> ;
+<o_elif> ::= î | #110 elif <expressao> #112 <lista_cmd> <o_elif> ;
 
 <o_else> ::= î | else <lista_cmd> ;
 
@@ -142,27 +142,27 @@ until = pr : "until"
 
 <lista_cmd1> ::=  <lista_cmd> | î ;
 
-<repeat> ::= repeat <lista_cmd> <repeat1> ;
+<repeat> ::= #113 repeat <lista_cmd> <repeat1> ;
 
-<repeat1> ::=  while <expressao> |  until <expressao> ;
+<repeat1> ::=  while <expressao> #114 |  until <expressao> #115;
 
 <expressao> ::= <elemento> <expressao1> ; 
-<expressao1> ::= î | "&&" <elemento> <expressao1> | "||" <elemento> <expressao1> ; 
-<elemento> ::= <relacional> | true | false | "!" <elemento> ; 
+<expressao1> ::= î | "&&" <elemento> #116 <expressao1> | "||" <elemento> #117 <expressao1> ; 
+<elemento> ::= <relacional> | true #118 | false #119 | "!" <elemento> #120 ; 
 <relacional> ::= <aritmetica> <relacional1> ; 
-<relacional1> ::= î | <operador_relacional> <aritmetica> ; 
+<relacional1> ::= î | <operador_relacional> #121 <aritmetica> #122 ; 
 <operador_relacional>::= "==" | "!=" | "<" | ">" ; 
 <aritmetica> ::= <termo> <aritmetica1> ; 
-<aritmetica1> ::= î | "+" <termo> <aritmetica1> | "-" <termo> <aritmetica1> ; 
+<aritmetica1> ::= î | "+" <termo> #123 <aritmetica1> | "-" <termo> #124 <aritmetica1> ; 
 <termo> ::= <fator> <termo1> ; 
-<termo1> ::= î | "*" <fator> <termo1> | "/" <fator> <termo1> ; 
-<fator> ::= id | 
- cte | 
- cte_2 | 
- ct | 
+<termo1> ::= î | "*" <fator> #125 <termo1> | "/" <fator> #126 <termo1> ; 
+<fator> ::= id #127 | 
+ cte #128 | 
+ cte_2 #129 | 
+ ct #130 | 
  "(" <expressao> ")" | 
  "+" <fator> | 
- "-" <fator> ; 
+ "-" <fator> #131 ; 
 
 
 
