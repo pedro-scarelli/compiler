@@ -20,10 +20,10 @@ public class Sintatico implements Constants
         return x >= FIRST_NON_TERMINAL && x < FIRST_SEMANTIC_ACTION;
     }
 
-    // private static final boolean isSemanticAction(int x)
-    // {
-    //     return x >= FIRST_SEMANTIC_ACTION;
-    // }
+    private static final boolean isSemanticAction(int x)
+    {
+        return x >= FIRST_SEMANTIC_ACTION;
+    }
 
     private boolean step() throws LexicalError, SyntaticError, SemanticError
     {
@@ -66,7 +66,6 @@ public class Sintatico implements Constants
             if (pushProduction(x, a))
                 return false;
             else
-                System.out.println(currentToken.getLexeme());
                 throw new SyntaticError(PARSER_ERROR[x], currentToken.getPosition(), currentToken.getLexeme());
         }
         else // isSemanticAction(x)

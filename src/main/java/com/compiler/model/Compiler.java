@@ -26,24 +26,24 @@ public class Compiler {
             syntatic.parse(lexical, semantic);
             result = "programa compilado com sucesso";
         } catch ( LexicalError lexicalError ) {
-            result = treatLexicalError(lexicalError);
+            treatLexicalError(lexicalError);
         } catch ( SyntaticError syntaticError ) {
-            result = treatSyntaticError(syntaticError);		
+            treatSyntaticError(syntaticError);		
         } catch ( SemanticError e ) {
             result = "Erro semantico";
         }
     }
 
-    private String treatLexicalError(LexicalError lexicalError) {
+    private void treatLexicalError(LexicalError lexicalError) {
         var line = getLineFromPosition(lexicalError.getPosition());
-        return "Erro na linha " + line + " - " + lexicalError.getMessage();
+        result = "Erro na linha " + line + " - " + lexicalError.getMessage();
     }
 
-    private String treatSyntaticError(SyntaticError syntaticError) {
+    private void treatSyntaticError(SyntaticError syntaticError) {
         var line = getLineFromPosition(syntaticError.getPosition());
         var lexeme = syntaticError.getLexeme();
         lexeme = getLexemeOrEOF(syntaticError.getPosition(), lexeme);
-        return "Erro na linha " + line + " - " + "encontrado " + lexeme + " " + syntaticError.getMessage();
+        result = "Erro na linha " + line + " - " + "encontrado " + lexeme + " " + syntaticError.getMessage();
     }
 
     private int getLineFromPosition(int position) {

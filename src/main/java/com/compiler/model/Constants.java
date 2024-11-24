@@ -6,7 +6,7 @@ public interface Constants extends ScannerConstants, ParserConstants
     int DOLLAR   = 1;
 
     int t_pr = 2;
-    int t_id = 3; 
+    int t_id = 3;
     int t_cte = 4;
     int t_cte_2 = 5;
     int t_ct = 6;

@@ -1,5 +1,6 @@
 package com.compiler.view;
 
+import com.compiler.model.*;
 import com.compiler.model.Compiler;
 
 import javax.swing.*;
@@ -254,7 +255,7 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void newFileBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newFileBtnActionPerformed
         textArea.setText("");
-        terminalTextArea.setText("");
+        clearTerminal();
         fileStatusLabel.setText("");
         currentFile = null;
     }//GEN-LAST:event_newFileBtnActionPerformed
@@ -290,7 +291,7 @@ public class MainFrame extends javax.swing.JFrame {
         if (returnValue == JFileChooser.APPROVE_OPTION) {
             getFileAndUpdateFileStatus(fileChooser);
         }
-        terminalTextArea.setText("");
+        clearTerminal();
     }//GEN-LAST:event_saveFileBtnActionPerformed
 
     private void showTeamBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showTeamBtnActionPerformed
@@ -362,8 +363,8 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void saveFileContent() {
         if (currentFile != null) {
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(currentFile))) {
-                writer.write(textArea.getText());
+            try {
+                FileManager.writeFile(currentFile, textArea.getText());
                 JOptionPane.showMessageDialog(this, "Arquivo salvo com sucesso.",
                                               "Salvar Arquivo", JOptionPane.INFORMATION_MESSAGE);
             } catch (IOException e) {
@@ -406,14 +407,19 @@ public class MainFrame extends javax.swing.JFrame {
     }
     
     private void setTextFromFile(File selectedFile) {
-        if(verifyIfFileIsTxtFile(selectedFile)) {
-            textArea.setText(convertTxtFileToString(selectedFile));
-            clearTerminal();
-            changeCurrentFile(selectedFile);
-        } else {
-            JOptionPane.showMessageDialog(this, "Por favor, selecione um arquivo de texto.",
+        if(FileManager.isTxtFile(selectedFile)) {
+            try {
+                textArea.setText(FileManager.readFile(selectedFile));
+                clearTerminal();
+                changeCurrentFile(selectedFile);
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(this, "Erro ao ler o arquivo: " + e.getMessage(),
+                                              "Erro", JOptionPane.ERROR_MESSAGE);
+            } catch (IllegalArgumentException ex) {     
+                JOptionPane.showMessageDialog(this, "Por favor, selecione um arquivo de texto.",
                                             "Arquivo Invalido", JOptionPane.WARNING_MESSAGE);
-        }
+            }
+        }   
     }
     
     private void clearTerminal() {
@@ -424,23 +430,5 @@ public class MainFrame extends javax.swing.JFrame {
         currentFile = selectedFile;
         var filePath = selectedFile.getAbsolutePath();
         fileStatusLabel.setText(filePath);
-    }
-    
-    private String convertTxtFileToString(File selectedFile) {
-        var content = new StringBuilder();
-        String line;
-        try (BufferedReader reader = new BufferedReader(new FileReader(selectedFile))) {
-            while ((line = reader.readLine()) != null) {
-                content.append(line).append("\n");
-            }
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "Erro ao ler o arquivo: " + e.getMessage(),
-                                             "Erro", JOptionPane.ERROR_MESSAGE);
-        }
-        return content.toString();
-    }
-        
-    private boolean verifyIfFileIsTxtFile(File selectedFile) {
-        return selectedFile.isFile() && selectedFile.getName().endsWith(".txt");
     }
 }
