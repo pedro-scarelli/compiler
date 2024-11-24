@@ -268,7 +268,7 @@ public class MainFrame extends javax.swing.JFrame {
         
         if (returnedValue == JFileChooser.APPROVE_OPTION) {
             File selectedFile = fileChooser.getSelectedFile();
-            setTextFromFile(selectedFile);
+            isTxtFileAndsetTextFromFile(selectedFile);
             return;
         } 
 
@@ -290,6 +290,7 @@ public class MainFrame extends javax.swing.JFrame {
         var returnValue = askSaveHow(fileChooser);
 
         if (returnValue == JFileChooser.APPROVE_OPTION) {
+            System.out.println("293");
             getFileAndUpdateFileStatus(fileChooser);
         }
         clearTerminal();
@@ -345,10 +346,14 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void getFileAndUpdateFileStatus(JFileChooser fileChooser) {
         currentFile = fileChooser.getSelectedFile();
+        System.out.println(currentFile.getAbsolutePath());
 
-        if (currentFile.exists()) {
-            replaceFileOrCancelSave();
+        if (!currentFile.exists()) {
+            saveFileAndUpdateStatus();
+            return;
         } 
+
+        replaceFileOrCancelSave();
     }
 
     private void replaceFileOrCancelSave() {
@@ -356,8 +361,10 @@ public class MainFrame extends javax.swing.JFrame {
         "O arquivo ja existe. Deseja substituir?", "Substituir Arquivo",
         JOptionPane.YES_NO_OPTION);
         
-        if (confirm == JOptionPane.NO_OPTION) return;
+        if (confirm != JOptionPane.NO_OPTION) saveFileAndUpdateStatus();        
+    }
 
+    private void saveFileAndUpdateStatus() {
         fileStatusLabel.setText(currentFile.getAbsolutePath());
         saveFileContent();
     }
@@ -407,20 +414,29 @@ public class MainFrame extends javax.swing.JFrame {
         actionMap.put(actionName, action);
     }
     
-    private void setTextFromFile(File selectedFile) {
+    private void isTxtFileAndsetTextFromFile(File selectedFile) {
         if(fileManager.isTxtFile(selectedFile)) {
-            try {
-                textArea.setText(fileManager.readFile(selectedFile));
-                clearTerminal();
-                changeCurrentFile(selectedFile);
-            } catch (IOException e) {
-                JOptionPane.showMessageDialog(this, "Erro ao ler o arquivo: " + e.getMessage(),
-                                              "Erro", JOptionPane.ERROR_MESSAGE);
-            } catch (IllegalArgumentException ex) {     
-                JOptionPane.showMessageDialog(this, "Por favor, selecione um arquivo de texto.",
-                                            "Arquivo Invalido", JOptionPane.WARNING_MESSAGE);
-            }
+            setTextFromFile(selectedFile);
+            return;
         }   
+        
+        JOptionPane.showMessageDialog(this, "Por favor, selecione um arquivo de texto.",
+        "Arquivo Invalido", JOptionPane.WARNING_MESSAGE);
+    }
+
+    private void setTextFromFile(File selectedFile) {
+        try {
+            textArea.setText(fileManager.readFile(selectedFile));
+            clearTerminal();
+            changeCurrentFile(selectedFile);
+            return;
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Erro ao ler o arquivo: " + e.getMessage(),
+                                          "Erro", JOptionPane.ERROR_MESSAGE);
+        } catch (IllegalArgumentException ex) {     
+            JOptionPane.showMessageDialog(this, "Por favor, selecione um arquivo de texto.",
+                                        "Arquivo Invalido", JOptionPane.WARNING_MESSAGE);
+        }
     }
     
     private void clearTerminal() {
