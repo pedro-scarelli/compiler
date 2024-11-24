@@ -1,16 +1,16 @@
 package com.compiler.model;
 
-public class Lexico implements Constants
+public class Lexical implements Constants
 {
     private int position;
     private String input;
 
-    public Lexico()
+    public Lexical()
     {
         this("");
     }
 
-    public Lexico(String input)
+    public Lexical(String input)
     {
         setInput(input);
     }

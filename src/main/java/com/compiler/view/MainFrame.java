@@ -11,6 +11,7 @@ import java.awt.event.KeyEvent;
 
 public class MainFrame extends javax.swing.JFrame {
     
+    private FileManager fileManager = new FileManager(this);
     private File currentFile;
     
     public MainFrame() {
@@ -275,8 +276,8 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_openFileBtnActionPerformed
 
     private void compileCodeBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_compileCodeBtnActionPerformed
-        var compiler = new Compiler(textArea.getText());
-        terminalTextArea.setText(compiler.getResult());
+        var compiler = new Compiler(textArea.getText(), currentFile, fileManager);
+        terminalTextArea.setText(compiler.getResultFeedback());
     }//GEN-LAST:event_compileCodeBtnActionPerformed
 
     private void saveFileBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveFileBtnActionPerformed
@@ -364,7 +365,7 @@ public class MainFrame extends javax.swing.JFrame {
     private void saveFileContent() {
         if (currentFile != null) {
             try {
-                FileManager.writeFile(currentFile, textArea.getText());
+                fileManager.writeFile(currentFile, textArea.getText());
                 JOptionPane.showMessageDialog(this, "Arquivo salvo com sucesso.",
                                               "Salvar Arquivo", JOptionPane.INFORMATION_MESSAGE);
             } catch (IOException e) {
@@ -407,9 +408,9 @@ public class MainFrame extends javax.swing.JFrame {
     }
     
     private void setTextFromFile(File selectedFile) {
-        if(FileManager.isTxtFile(selectedFile)) {
+        if(fileManager.isTxtFile(selectedFile)) {
             try {
-                textArea.setText(FileManager.readFile(selectedFile));
+                textArea.setText(fileManager.readFile(selectedFile));
                 clearTerminal();
                 changeCurrentFile(selectedFile);
             } catch (IOException e) {
@@ -430,5 +431,9 @@ public class MainFrame extends javax.swing.JFrame {
         currentFile = selectedFile;
         var filePath = selectedFile.getAbsolutePath();
         fileStatusLabel.setText(filePath);
+    }
+    
+    public void showError(String errorMessage) {
+        JOptionPane.showMessageDialog(this, errorMessage, "Erro", JOptionPane.ERROR_MESSAGE);
     }
 }

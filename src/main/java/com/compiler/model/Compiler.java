@@ -1,49 +1,64 @@
 package com.compiler.model;
 
+import java.io.File;
+
 public class Compiler {
 
-    private Lexico lexical;
-    private Sintatico syntatic;
-    private Semantico semantic;
+    private Lexical lexical;
+    private Syntatic syntatic;
+    private Semantic semantic;
     private String inputText;
-    private String result;
+    private String resultFeedback;
+    private File sourceCode;
+
+    private FileManager fileManager;
+
+    private final String SUCCESS_MESSAGE = "programa compilado com sucesso";
 
     private static final String EOF = "EOF";
     private static final String STRING_CONSTANT = "constante_string";
 
-    public Compiler(String inputText) {
+    public Compiler(String inputText, File sourceCode, FileManager fileManager) {
+        this.lexical = new Lexical();
+        this.syntatic = new Syntatic();
+        this.semantic = new Semantic();
+
+        this.sourceCode = sourceCode;
+        this.fileManager = fileManager;
+
         this.inputText = inputText;
         lexical.setInput(inputText);
         compileSourceCodeAndGenerateObjectCode();
     }
 
-    public String getResult() { 
-        return result;
+    public String getResultFeedback() { 
+        return resultFeedback;
     }
 
     public void compileSourceCodeAndGenerateObjectCode() {
         try {
             syntatic.parse(lexical, semantic);
-            result = "programa compilado com sucesso";
+            fileManager.createObjectCodeFile(semantic.getObjectCode(), sourceCode);
+            resultFeedback = SUCCESS_MESSAGE;
         } catch ( LexicalError lexicalError ) {
             treatLexicalError(lexicalError);
         } catch ( SyntaticError syntaticError ) {
             treatSyntaticError(syntaticError);		
         } catch ( SemanticError e ) {
-            result = "Erro semantico";
+            resultFeedback = "Erro semantico";
         }
     }
 
     private void treatLexicalError(LexicalError lexicalError) {
         var line = getLineFromPosition(lexicalError.getPosition());
-        result = "Erro na linha " + line + " - " + lexicalError.getMessage();
+        resultFeedback = "Erro na linha " + line + " - " + lexicalError.getMessage();
     }
 
     private void treatSyntaticError(SyntaticError syntaticError) {
         var line = getLineFromPosition(syntaticError.getPosition());
         var lexeme = syntaticError.getLexeme();
         lexeme = getLexemeOrEOF(syntaticError.getPosition(), lexeme);
-        result = "Erro na linha " + line + " - " + "encontrado " + lexeme + " " + syntaticError.getMessage();
+        resultFeedback = "Erro na linha " + line + " - " + "encontrado " + lexeme + " " + syntaticError.getMessage();
     }
 
     private int getLineFromPosition(int position) {

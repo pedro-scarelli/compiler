@@ -2,13 +2,13 @@ package com.compiler.model;
 
 import java.util.Stack;
 
-public class Sintatico implements Constants
+public class Syntatic implements Constants
 {
     private Stack<Integer> stack = new Stack<>();
     private Token currentToken;
     private Token previousToken;
-    private Lexico scanner;
-    private Semantico semanticAnalyser;
+    private Lexical scanner;
+    private Semantic semanticAnalyser;
 
     private static final boolean isTerminal(int x)
     {
@@ -20,10 +20,10 @@ public class Sintatico implements Constants
         return x >= FIRST_NON_TERMINAL && x < FIRST_SEMANTIC_ACTION;
     }
 
-    private static final boolean isSemanticAction(int x)
-    {
-        return x >= FIRST_SEMANTIC_ACTION;
-    }
+    // private static final boolean isSemanticAction(int x)
+    // {
+    //     return x >= FIRST_SEMANTIC_ACTION;
+    // }
 
     private boolean step() throws LexicalError, SyntaticError, SemanticError
     {
@@ -92,7 +92,7 @@ public class Sintatico implements Constants
             return false;
     }
 
-    public void parse(Lexico scanner, Semantico semanticAnalyser) throws LexicalError, SyntaticError, SemanticError
+    public void parse(Lexical scanner, Semantic semanticAnalyser) throws LexicalError, SyntaticError, SemanticError
     {
         this.scanner = scanner;
         this.semanticAnalyser = semanticAnalyser;
