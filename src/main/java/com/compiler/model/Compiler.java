@@ -45,7 +45,7 @@ public class Compiler {
         } catch ( SyntaticError syntaticError ) {
             treatSyntaticError(syntaticError);		
         } catch ( SemanticError e ) {
-            resultFeedback = "Erro semantico";
+            resultFeedback = e.getMessage();
         }
     }
 

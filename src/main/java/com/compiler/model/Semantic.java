@@ -111,8 +111,8 @@ public class Semantic implements Constants
 
     private static String getVariableTypeByInitial(String id) throws SemanticError {
         var idParts = id.split("_");
-        var varType = getVariableTypeByInitial(idParts[0]);
-        switch(varType) {
+        var variableInitialLetter = idParts[0];
+        switch(variableInitialLetter) {
             case "i":
                 return "int64";
             case "f":
@@ -200,9 +200,9 @@ public class Semantic implements Constants
     }
     
     private static void method109() {
-        var firstLabel = "M1";
+        var firstLabel = "M" + labelStack.size();
         labelStack.push(firstLabel);
-        var secondLabel = "M2";
+        var secondLabel = "M" + labelStack.size();
         objectCode.append(String.format("brfalse %s\n", firstLabel));
         labelStack.push(secondLabel);
     }
@@ -221,14 +221,14 @@ public class Semantic implements Constants
     }
     
     private static void method112() {
-        var label = "M";
+        var label = "M" + labelStack.size();
         objectCode.append(String.format("brfalse %s\n", label));
         labelStack.push(label);
     }
     
     private static void method113() {
-        var label = "M";
-        objectCode.append(String.format("M:\n", label));
+        var label = "M" + labelStack.size();
+        objectCode.append(String.format("%s:\n", label));
         labelStack.push(label);
     }
     
