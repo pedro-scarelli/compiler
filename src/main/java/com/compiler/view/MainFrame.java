@@ -290,7 +290,6 @@ public class MainFrame extends javax.swing.JFrame {
         var returnValue = askSaveHow(fileChooser);
 
         if (returnValue == JFileChooser.APPROVE_OPTION) {
-            System.out.println("293");
             getFileAndUpdateFileStatus(fileChooser);
         }
         clearTerminal();
@@ -346,7 +345,6 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void getFileAndUpdateFileStatus(JFileChooser fileChooser) {
         currentFile = fileChooser.getSelectedFile();
-        System.out.println(currentFile.getAbsolutePath());
 
         if (!currentFile.exists()) {
             saveFileAndUpdateStatus();

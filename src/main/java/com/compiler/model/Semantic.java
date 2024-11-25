@@ -2,6 +2,7 @@ package com.compiler.model;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -20,6 +21,7 @@ public class Semantic implements Constants
     private static List<String> idList = new ArrayList<>();
     private static Set<String> symbolTable = new HashSet<>();
 
+    private static Set<Integer> booleanTypes = new HashSet<>(Arrays.asList(9, 10));
 
     private static final Map<Integer, ActionWithException> ACTIONS = new HashMap<>();
         
@@ -263,12 +265,12 @@ public class Semantic implements Constants
     }
     
     public static void method116() throws SemanticError {
-        pop2TypesAndPushCombination();
+        pop2TypesAndPushCombination("&&");
         objectCode.append("and\n");
     }
     
     public static void method117() throws SemanticError {
-        pop2TypesAndPushCombination();
+        pop2TypesAndPushCombination("||");
         objectCode.append("or\n");
     }
     
@@ -291,7 +293,7 @@ public class Semantic implements Constants
     }
     
     public static void method122() throws SemanticError {
-        pop2TypesAndPushCombination();
+        pop2TypesAndPushCombination(relationalOperator);
         switch(relationalOperator) {
             case "==":
                 objectCode.append("ceq\n");
@@ -312,36 +314,52 @@ public class Semantic implements Constants
     }
     
     public static void method123() throws SemanticError {
-        pop2TypesAndPushCombination();
+        pop2TypesAndPushCombination("+");
         var addCode = "add\n";
         objectCode.append(addCode);
     }
     
     public static void method124() throws SemanticError {
-        pop2TypesAndPushCombination();
+        pop2TypesAndPushCombination("-");
         var subCode = "sub\n";
         objectCode.append(subCode);
     }
     
     public static void method125() throws SemanticError {
-        pop2TypesAndPushCombination();
+        pop2TypesAndPushCombination("*");
         var mulCode = "mul\n";
         objectCode.append(mulCode);
     }
     
     public static void method126() throws SemanticError {
-        pop2TypesAndPushCombination();
+        pop2TypesAndPushCombination("/");
         var divCode = "div\n";
         objectCode.append(divCode);
     }
 
-    public static void pop2TypesAndPushCombination() throws SemanticError {
+    public static void pop2TypesAndPushCombination(String operator) throws SemanticError {
         var firstValueType = typeStack.pop();
         var secondValueType = typeStack.pop();
-        pushVarsCombinationType(firstValueType, secondValueType);
+        pushVarsCombinationType(firstValueType, secondValueType, operator);
     }
 
-    public static void pushVarsCombinationType(int firstValueType, int secondValueType) throws SemanticError {
+    public static void pushVarsCombinationType(int firstValueType, int secondValueType, String operator) throws SemanticError {
+        switch (operator) {
+            case "+":
+            case "-":
+            case "*":
+            case "/": getArimethicCombination(firstValueType, secondValueType); break;
+            case "&&": getAndOperatorCombination(firstValueType, secondValueType); break;
+            case "||": getOrOperatorCombination(firstValueType, secondValueType); break;
+            case "==": getEqualsOperatorCombination(firstValueType, secondValueType); break;
+            case "!=": getDifferentOperatorCombination(firstValueType, secondValueType); break;
+            case "<": getLessThanOperatorCombination(firstValueType, secondValueType); break;
+            case ">": getGreaterThanOperatorCombination(firstValueType, secondValueType); break;
+            default: throw new SemanticError("Unrecognized operator");
+        }
+    }
+    
+    public static void getArimethicCombination(int firstValueType, int secondValueType) throws SemanticError {
         if (firstValueType == secondValueType) {
             typeStack.push(firstValueType);
             return;
@@ -353,6 +371,51 @@ public class Semantic implements Constants
         throw new SemanticError("Types not compatible");
     }
     
+    public static void getAndOperatorCombination(int firstValueType, int secondValueType) throws SemanticError {
+        if(!booleanTypes.contains(firstValueType) || !booleanTypes.contains(secondValueType))
+            throw new SemanticError("Types not compatible");
+
+        if (firstValueType == 9 && secondValueType == 9) {
+            typeStack.push(9);
+            return;
+        }
+        typeStack.push(10);
+    }
+    
+    public static void getOrOperatorCombination(int firstValueType, int secondValueType) throws SemanticError {
+        if(!booleanTypes.contains(firstValueType) || !booleanTypes.contains(secondValueType))
+            throw new SemanticError("Types not compatible");
+
+        if (firstValueType == 9 || secondValueType == 9) {
+            typeStack.push(9);
+            return;
+        }
+        typeStack.push(10);    
+    }
+    
+    public static void getEqualsOperatorCombination(int firstValueType, int secondValueType) throws SemanticError {
+
+        
+    }
+    
+    public static void getDifferentOperatorCombination(int firstValueType, int secondValueType) throws SemanticError {
+        
+
+        throw new SemanticError("Types not compatible");
+    }
+    
+    public static void getLessThanOperatorCombination(int firstValueType, int secondValueType) throws SemanticError {
+        
+
+        throw new SemanticError("Types not compatible");
+    }
+    
+    public static void getGreaterThanOperatorCombination(int firstValueType, int secondValueType) throws SemanticError {
+        
+
+        throw new SemanticError("Types not compatible");
+    }
+
     public static void method127() throws SemanticError {
         if (!symbolTable.contains(currentToken.getLexeme())) throw new SemanticError(currentToken.getLexeme() + " não declarado");
         var varType = currentToken.getId();

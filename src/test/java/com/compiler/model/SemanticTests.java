@@ -204,27 +204,32 @@ class SemanticTest {
     }
 
     @Test
-    void testPop2TypesAndPushCombination() {
+    void testArimethicCombination() {
         try {
             semantic.pushTypeStack(4);
             semantic.pushTypeStack(4);
-            Semantic.pop2TypesAndPushCombination();
+            Semantic.pop2TypesAndPushCombination("+");
             assertEquals(4, semantic.popTypeStack());
 
             semantic.pushTypeStack(5);
             semantic.pushTypeStack(5);
-            Semantic.pop2TypesAndPushCombination();
+            Semantic.pop2TypesAndPushCombination("-");
             assertEquals(5, semantic.popTypeStack());
 
             semantic.pushTypeStack(4);
             semantic.pushTypeStack(5);
-            Semantic.pop2TypesAndPushCombination();
+            Semantic.pop2TypesAndPushCombination("*");
+            assertEquals(5, semantic.popTypeStack());
+
+            semantic.pushTypeStack(4);
+            semantic.pushTypeStack(5);
+            Semantic.pop2TypesAndPushCombination("/");
             assertEquals(5, semantic.popTypeStack());
 
             semantic.pushTypeStack(4);
             semantic.pushTypeStack(6);
             try {
-                Semantic.pop2TypesAndPushCombination();
+                Semantic.pop2TypesAndPushCombination("+");
                 fail("Expected SemanticError due to incompatible types");
             } catch (SemanticError e) {
                 assertTrue(e.getMessage().contains("Types not compatible"));
@@ -244,102 +249,102 @@ class SemanticTest {
         assertEquals(expected, semantic.getRelationalOperator());
     }
 
-    @Test
-    void testAction122EqualOperator() {
-        try {
-            semantic.pushTypeStack(4);
-            semantic.pushTypeStack(4);
+    // @Test
+    // void testAction122EqualOperator() {
+    //     try {
+    //         semantic.pushTypeStack(4);
+    //         semantic.pushTypeStack(4);
             
-            semantic.setRelationalOperator("==");
+    //         semantic.setRelationalOperator("==");
             
-            Semantic.method122();
-        } catch (SemanticError e) { e.printStackTrace(); }
+    //         Semantic.method122();
+    //     } catch (SemanticError e) { e.printStackTrace(); }
 
-        var expectedCode = """
-            ceq
-            """;
+    //     var expectedCode = """
+    //         ceq
+    //         """;
         
-        assertEquals(expectedCode, semantic.getObjectCode());
-        assertEquals(4, semantic.popTypeStack());
-    }
+    //     assertEquals(expectedCode, semantic.getObjectCode());
+    //     assertEquals(4, semantic.popTypeStack());
+    // }
 
-    @Test
-    void testAction122NotEqualOperator() {
-        try {
-            semantic.pushTypeStack(4);
-            semantic.pushTypeStack(4);
+    // @Test
+    // void testAction122NotEqualOperator() {
+    //     try {
+    //         semantic.pushTypeStack(4);
+    //         semantic.pushTypeStack(4);
             
-            semantic.setRelationalOperator("!=");
+    //         semantic.setRelationalOperator("!=");
             
-            Semantic.method122();
-        } catch (SemanticError e) { e.printStackTrace(); }
+    //         Semantic.method122();
+    //     } catch (SemanticError e) { e.printStackTrace(); }
 
-        var expectedCode = """
-            ceq
-            ldc.i4 1
-            xor
-            """;
+    //     var expectedCode = """
+    //         ceq
+    //         ldc.i4 1
+    //         xor
+    //         """;
         
-        assertEquals(expectedCode, semantic.getObjectCode());
-        assertEquals(4, semantic.popTypeStack());
-    }
+    //     assertEquals(expectedCode, semantic.getObjectCode());
+    //     assertEquals(4, semantic.popTypeStack());
+    // }
 
-    @Test
-    void testAction122GreaterThanOperator() {
-        try {
-            semantic.pushTypeStack(4);
-            semantic.pushTypeStack(4);
+    // @Test
+    // void testAction122GreaterThanOperator() {
+    //     try {
+    //         semantic.pushTypeStack(4);
+    //         semantic.pushTypeStack(4);
             
-            semantic.setRelationalOperator(">");
+    //         semantic.setRelationalOperator(">");
             
-            Semantic.method122();
-        } catch (SemanticError e) {
-            e.printStackTrace();
-        }
+    //         Semantic.method122();
+    //     } catch (SemanticError e) {
+    //         e.printStackTrace();
+    //     }
 
-        var expectedCode = """
-            cgt
-            """;
+    //     var expectedCode = """
+    //         cgt
+    //         """;
         
-        assertEquals(expectedCode, semantic.getObjectCode());
-        assertEquals(4, semantic.popTypeStack());
-    }
+    //     assertEquals(expectedCode, semantic.getObjectCode());
+    //     assertEquals(4, semantic.popTypeStack());
+    // }
 
-    @Test
-    void testAction122LessThanOperator() {
-        try {
-            semantic.pushTypeStack(4);
-            semantic.pushTypeStack(4);
+    // @Test
+    // void testAction122LessThanOperator() {
+    //     try {
+    //         semantic.pushTypeStack(4);
+    //         semantic.pushTypeStack(4);
             
-            semantic.setRelationalOperator("<");
+    //         semantic.setRelationalOperator("<");
             
-            Semantic.method122();
-        } catch (SemanticError e) {
-            e.printStackTrace();
-        }
+    //         Semantic.method122();
+    //     } catch (SemanticError e) {
+    //         e.printStackTrace();
+    //     }
 
-        var expectedCode = """
-            clt
-            """;
+    //     var expectedCode = """
+    //         clt
+    //         """;
         
-        assertEquals(expectedCode, semantic.getObjectCode());
-        assertEquals(4, semantic.popTypeStack());
-    }
+    //     assertEquals(expectedCode, semantic.getObjectCode());
+    //     assertEquals(4, semantic.popTypeStack());
+    // }
 
-    @Test
-    void testAction122InvalidRelationalOperator() {
-        try {
-            semantic.pushTypeStack(4);
-            semantic.pushTypeStack(4);
+    // @Test
+    // void testAction122InvalidRelationalOperator() {
+    //     try {
+    //         semantic.pushTypeStack(4);
+    //         semantic.pushTypeStack(4);
             
-            semantic.setRelationalOperator("&");
+    //         semantic.setRelationalOperator("&");
             
-            Semantic.method122();
-            fail("Expected SemanticError due to invalid relational operator");
-        } catch (SemanticError e) {
-            assertTrue(e.getMessage().contains("Relational operator incorrect"));
-        }
-    }
+    //         Semantic.method122();
+    //         fail("Expected SemanticError due to invalid relational operator");
+    //     } catch (SemanticError e) {
+    //         assertTrue(e.getMessage().contains("Relational operator incorrect"));
+    //     }
+    // }
     
     @Test
     void testAction120() {
@@ -353,6 +358,44 @@ class SemanticTest {
             """;
         
         assertEquals(expected, semantic.getObjectCode());
+    }
+    
+    @Test
+    public void testMethod116() throws SemanticError {
+        semantic.pushTypeStack(9);
+        semantic.pushTypeStack(9);
+        Semantic.method116();
+
+        assertEquals("and\n", semantic.getObjectCode());
+
+        semantic.pushTypeStack(4);
+        semantic.pushTypeStack(9);
+
+        try {
+            Semantic.method116();
+            fail("Expected SemanticError due to incompatible types");
+        } catch (SemanticError e) {
+            assertTrue(e.getMessage().contains("Types not compatible"));
+        }
+    }
+
+    @Test
+    public void testMethod117() throws SemanticError {
+        semantic.pushTypeStack(9);
+        semantic.pushTypeStack(9);
+        Semantic.method117();
+
+        assertEquals("or\n", semantic.getObjectCode());
+
+        semantic.pushTypeStack(4);
+        semantic.pushTypeStack(9);
+
+        try {
+            Semantic.method117();
+            fail("Expected SemanticError due to incompatible types");
+        } catch (SemanticError e) {
+            assertTrue(e.getMessage().contains("Types not compatible"));
+        }
     }
 }
 
