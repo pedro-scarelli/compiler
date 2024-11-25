@@ -66,7 +66,7 @@ class SemanticTest {
             """;
 
         assertEquals(expected, semantic.getObjectCode());
-        assertEquals(4, semantic.popTypeStack());
+        assertEquals("int64", semantic.popTypeStack());
     }
 
     @Test
@@ -80,7 +80,7 @@ class SemanticTest {
             """;
 
         assertEquals(expected, semantic.getObjectCode());
-        assertEquals(5, semantic.popTypeStack());
+        assertEquals("float64", semantic.popTypeStack());
     }
 
     @Test
@@ -94,7 +94,7 @@ class SemanticTest {
             """;
 
         assertEquals(expected, semantic.getObjectCode());
-        assertEquals(6, semantic.popTypeStack());
+        assertEquals("string", semantic.popTypeStack());
     }
 
     @Test
@@ -108,7 +108,7 @@ class SemanticTest {
             """;
 
         assertEquals(expected, semantic.getObjectCode());
-        assertEquals(36, semantic.popTypeStack());
+        assertEquals("bool", semantic.popTypeStack());
     }
 
     @Test
@@ -122,7 +122,7 @@ class SemanticTest {
             """;
 
         assertEquals(expected, semantic.getObjectCode());
-        assertEquals(36, semantic.popTypeStack());
+        assertEquals("bool", semantic.popTypeStack());
     }
 
     @Test
@@ -142,8 +142,8 @@ class SemanticTest {
     @Test
     void testAction123() {
         try {
-            semantic.pushTypeStack(4);
-            semantic.pushTypeStack(4);
+            semantic.pushTypeStack("int64");
+            semantic.pushTypeStack("int64");
             Semantic.method123();
         } catch (SemanticError e) { e.printStackTrace(); }
     
@@ -152,14 +152,14 @@ class SemanticTest {
             """;
         
         assertEquals(expected, semantic.getObjectCode());
-        assertEquals(4, semantic.popTypeStack());
+        assertEquals("int64", semantic.popTypeStack());
     }
     
     @Test
     void testAction124() {
         try {
-            semantic.pushTypeStack(4);
-            semantic.pushTypeStack(4);
+            semantic.pushTypeStack("int64");
+            semantic.pushTypeStack("int64");
             Semantic.method124();
         } catch (SemanticError e) { e.printStackTrace(); }
     
@@ -168,14 +168,14 @@ class SemanticTest {
             """;
         
         assertEquals(expected, semantic.getObjectCode());
-        assertEquals(4, semantic.popTypeStack());
+        assertEquals("int64", semantic.popTypeStack());
     }
     
     @Test
     void testAction125() {
         try {
-            semantic.pushTypeStack(4);
-            semantic.pushTypeStack(4);
+            semantic.pushTypeStack("int64");
+            semantic.pushTypeStack("int64");
             Semantic.method125();
         } catch (SemanticError e) { e.printStackTrace(); }
     
@@ -184,14 +184,14 @@ class SemanticTest {
             """;
         
         assertEquals(expected, semantic.getObjectCode());
-        assertEquals(4, semantic.popTypeStack());
+        assertEquals("int64", semantic.popTypeStack());
     }
     
     @Test
     void testAction126() {
         try {
-            semantic.pushTypeStack(4);
-            semantic.pushTypeStack(4);
+            semantic.pushTypeStack("int64");
+            semantic.pushTypeStack("int64");
             Semantic.method126();
         } catch (SemanticError e) { e.printStackTrace(); }
     
@@ -200,34 +200,34 @@ class SemanticTest {
             """;
         
         assertEquals(expected, semantic.getObjectCode());
-        assertEquals(4, semantic.popTypeStack());
+        assertEquals("int64", semantic.popTypeStack());
     }
 
     @Test
     void testArimethicCombination() {
         try {
-            semantic.pushTypeStack(4);
-            semantic.pushTypeStack(4);
+            semantic.pushTypeStack("int64");
+            semantic.pushTypeStack("int64");
             Semantic.pop2TypesAndPushCombination("+");
-            assertEquals(4, semantic.popTypeStack());
+            assertEquals("int64", semantic.popTypeStack());
 
-            semantic.pushTypeStack(5);
-            semantic.pushTypeStack(5);
+            semantic.pushTypeStack("float64");
+            semantic.pushTypeStack("float64");
             Semantic.pop2TypesAndPushCombination("-");
-            assertEquals(5, semantic.popTypeStack());
+            assertEquals("float64", semantic.popTypeStack());
 
-            semantic.pushTypeStack(4);
-            semantic.pushTypeStack(5);
+            semantic.pushTypeStack("int64");
+            semantic.pushTypeStack("float64");
             Semantic.pop2TypesAndPushCombination("*");
-            assertEquals(5, semantic.popTypeStack());
+            assertEquals("float64", semantic.popTypeStack());
 
-            semantic.pushTypeStack(4);
-            semantic.pushTypeStack(5);
+            semantic.pushTypeStack("int64");
+            semantic.pushTypeStack("float64");
             Semantic.pop2TypesAndPushCombination("/");
-            assertEquals(5, semantic.popTypeStack());
+            assertEquals("float64", semantic.popTypeStack());
 
-            semantic.pushTypeStack(4);
-            semantic.pushTypeStack(6);
+            semantic.pushTypeStack("int64");
+            semantic.pushTypeStack("string");
             try {
                 Semantic.pop2TypesAndPushCombination("+");
                 fail("Expected SemanticError due to incompatible types");
@@ -252,8 +252,8 @@ class SemanticTest {
     @Test
     void testAction122EqualOperator() {
         try {
-            semantic.pushTypeStack(4);
-            semantic.pushTypeStack(4);
+            semantic.pushTypeStack("int64");
+            semantic.pushTypeStack("int64");
             
             semantic.setRelationalOperator("==");
             
@@ -270,8 +270,8 @@ class SemanticTest {
     @Test
     void testAction122NotEqualOperator() {
         try {
-            semantic.pushTypeStack(4);
-            semantic.pushTypeStack(4);
+            semantic.pushTypeStack("int64");
+            semantic.pushTypeStack("int64");
             
             semantic.setRelationalOperator("!=");
             
@@ -290,8 +290,8 @@ class SemanticTest {
     @Test
     void testAction122GreaterThanOperator() {
         try {
-            semantic.pushTypeStack(4);
-            semantic.pushTypeStack(4);
+            semantic.pushTypeStack("int64");
+            semantic.pushTypeStack("int64");
             
             semantic.setRelationalOperator(">");
             
@@ -310,8 +310,8 @@ class SemanticTest {
     @Test
     void testAction122LessThanOperator() {
         try {
-            semantic.pushTypeStack(4);
-            semantic.pushTypeStack(4);
+            semantic.pushTypeStack("int64");
+            semantic.pushTypeStack("int64");
             
             semantic.setRelationalOperator("<");
             
@@ -330,8 +330,8 @@ class SemanticTest {
     @Test
     void testAction122InvalidRelationalOperator() {
         try {
-            semantic.pushTypeStack(4);
-            semantic.pushTypeStack(4);
+            semantic.pushTypeStack("int64");
+            semantic.pushTypeStack("int64");
             
             semantic.setRelationalOperator("&");
             
@@ -345,29 +345,29 @@ class SemanticTest {
     @Test
     void testRelationalCombination() {
         try {
-            semantic.pushTypeStack(4);
-            semantic.pushTypeStack(4);
+            semantic.pushTypeStack("int64");
+            semantic.pushTypeStack("int64");
             semantic.setRelationalOperator(">");
             Semantic.method122();
-            assertEquals(36, semantic.popTypeStack());
+            assertEquals("bool", semantic.popTypeStack());
 
-            semantic.pushTypeStack(4);
-            semantic.pushTypeStack(4);
+            semantic.pushTypeStack("int64");
+            semantic.pushTypeStack("int64");
             semantic.setRelationalOperator("<");
             Semantic.method122();
-            assertEquals(36, semantic.popTypeStack());
+            assertEquals("bool", semantic.popTypeStack());
 
-            semantic.pushTypeStack(5);
-            semantic.pushTypeStack(5);
+            semantic.pushTypeStack("float64");
+            semantic.pushTypeStack("float64");
             semantic.setRelationalOperator(">");
             Semantic.method122();
-            assertEquals(36, semantic.popTypeStack());
+            assertEquals("bool", semantic.popTypeStack());
 
-            semantic.pushTypeStack(6);
-            semantic.pushTypeStack(6);
+            semantic.pushTypeStack("string");
+            semantic.pushTypeStack("string");
             semantic.setRelationalOperator("==");
             Semantic.method122();
-            assertEquals(36, semantic.popTypeStack());
+            assertEquals("bool", semantic.popTypeStack());
             
         } catch (SemanticError e) { e.printStackTrace(); }
     }
@@ -375,8 +375,8 @@ class SemanticTest {
     @Test
     void testRelationalCombinationIntFloatFail() {
         try {
-            semantic.pushTypeStack(4);
-            semantic.pushTypeStack(5);
+            semantic.pushTypeStack("int64");
+            semantic.pushTypeStack("float64");
             semantic.setRelationalOperator("&&");
             Semantic.method122();
             fail("Expected SemanticError due to invalid relational operator");
@@ -388,8 +388,8 @@ class SemanticTest {
     @Test
     void testRelationalCombinationIntStringFail() {
         try {
-            semantic.pushTypeStack(4);
-            semantic.pushTypeStack(6);
+            semantic.pushTypeStack("int64");
+            semantic.pushTypeStack("string");
             semantic.setRelationalOperator("&&");
             Semantic.method122();
             fail("Expected SemanticError due to invalid relational operator");
@@ -401,8 +401,8 @@ class SemanticTest {
     @Test
     void testRelationalCombinationFloatStringFail() {
         try {
-            semantic.pushTypeStack(6);
-            semantic.pushTypeStack(5);
+            semantic.pushTypeStack("string");
+            semantic.pushTypeStack("float64");
             semantic.setRelationalOperator("&&");
             Semantic.method122();
             fail("Expected SemanticError due to invalid relational operator");
@@ -427,8 +427,8 @@ class SemanticTest {
     
     @Test
     public void testMethod116() throws SemanticError {
-        semantic.pushTypeStack(36);
-        semantic.pushTypeStack(36);
+        semantic.pushTypeStack("bool");
+        semantic.pushTypeStack("bool");
         Semantic.method116();
 
         assertEquals("and\n", semantic.getObjectCode());
@@ -436,8 +436,8 @@ class SemanticTest {
 
     @Test
     public void testMethod117() throws SemanticError {
-        semantic.pushTypeStack(36);
-        semantic.pushTypeStack(36);
+        semantic.pushTypeStack("bool");
+        semantic.pushTypeStack("bool");
         Semantic.method117();
 
         assertEquals("or\n", semantic.getObjectCode());
@@ -445,11 +445,11 @@ class SemanticTest {
             
     @Test
     public void testGetAndOrCombination() throws SemanticError {
-        Semantic.getAndOrCombination(36, 36);
-        assertEquals(36, semantic.popTypeStack());
+        Semantic.getAndOrCombination("bool", "bool");
+        assertEquals("bool", semantic.popTypeStack());
 
-        semantic.pushTypeStack(4);
-        semantic.pushTypeStack(36);
+        semantic.pushTypeStack("int64");
+        semantic.pushTypeStack("bool");
 
         try {
             Semantic.method117();
@@ -458,5 +458,10 @@ class SemanticTest {
             assertTrue(e.getMessage().contains("Types not compatible"));
         }
     }
+            
+    // @Test
+    // public void testAction127() {
+
+    // }
 }
 
