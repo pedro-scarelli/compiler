@@ -2,7 +2,6 @@ package com.compiler.model;
 
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -20,8 +19,6 @@ public class Semantic implements Constants
     private static Stack<String> labelStack = new Stack<>();
     private static List<String> idList = new ArrayList<>();
     private static Set<String> symbolTable = new HashSet<>();
-
-    private static Set<Integer> booleanTypes = new HashSet<>(Arrays.asList(9, 10));
 
     private static final Map<Integer, ActionWithException> ACTIONS = new HashMap<>();
         
@@ -65,10 +62,7 @@ public class Semantic implements Constants
         currentToken = token;
         System.out.println("ACTION #" + action + ", TOKEN: " + token);
         var methodAction = ACTIONS.get(action);
-        if (methodAction != null)
-            methodAction.run();
-        else
-            objectCode.append("-" + action + "-\n");
+        methodAction.run();
     }
 
     public String getObjectCode() {
@@ -275,12 +269,12 @@ public class Semantic implements Constants
     }
     
     public static void method118() throws SemanticError {
-        typeStack.push(9);
+        typeStack.push(36);
         objectCode.append("ldc.i4 1\n");
     }
     
     public static void method119() throws SemanticError {
-        typeStack.push(10);
+        typeStack.push(36);
         objectCode.append("ldc.i4 0\n");
     }
     
@@ -349,14 +343,36 @@ public class Semantic implements Constants
             case "-":
             case "*":
             case "/": getArimethicCombination(firstValueType, secondValueType); break;
-            case "&&": getAndOperatorCombination(firstValueType, secondValueType); break;
-            case "||": getOrOperatorCombination(firstValueType, secondValueType); break;
-            case "==": getEqualsOperatorCombination(firstValueType, secondValueType); break;
-            case "!=": getDifferentOperatorCombination(firstValueType, secondValueType); break;
-            case "<": getLessThanOperatorCombination(firstValueType, secondValueType); break;
-            case ">": getGreaterThanOperatorCombination(firstValueType, secondValueType); break;
+            case "&&": 
+            case "||": getAndOrCombination(firstValueType, secondValueType); break;
+            case "==": 
+            case "!=": 
+            case "<": 
+            case ">": getRelationalCombination(firstValueType, secondValueType); break;
             default: throw new SemanticError("Unrecognized operator");
         }
+    }
+
+    public static void getAndOrCombination(int firstValueType, int secondValueType) throws SemanticError {
+        if(firstValueType != 36 || secondValueType != 36)
+            throw new SemanticError("Types not compatible");
+        pushBooleanTypeToStack();
+    }
+
+    public static void getRelationalCombination(int firstValueType, int secondValueType) throws SemanticError {
+        if(isTypesValidForRelationalOperation(firstValueType, secondValueType))
+            throw new SemanticError("Types not compatible");
+        pushBooleanTypeToStack();
+    }
+
+    public static boolean isTypesValidForRelationalOperation(int firstValueType, int secondValueType) {
+        return (firstValueType != secondValueType) || 
+            (firstValueType != 4 && firstValueType != 5 && firstValueType != 6) || 
+            (secondValueType != 4 && secondValueType != 5 && secondValueType != 6);
+    }
+
+    public static void pushBooleanTypeToStack() {
+        typeStack.push(36);
     }
     
     public static void getArimethicCombination(int firstValueType, int secondValueType) throws SemanticError {
@@ -367,51 +383,6 @@ public class Semantic implements Constants
             typeStack.push(5);
             return;
         }
-
-        throw new SemanticError("Types not compatible");
-    }
-    
-    public static void getAndOperatorCombination(int firstValueType, int secondValueType) throws SemanticError {
-        if(!booleanTypes.contains(firstValueType) || !booleanTypes.contains(secondValueType))
-            throw new SemanticError("Types not compatible");
-
-        if (firstValueType == 9 && secondValueType == 9) {
-            typeStack.push(9);
-            return;
-        }
-        typeStack.push(10);
-    }
-    
-    public static void getOrOperatorCombination(int firstValueType, int secondValueType) throws SemanticError {
-        if(!booleanTypes.contains(firstValueType) || !booleanTypes.contains(secondValueType))
-            throw new SemanticError("Types not compatible");
-
-        if (firstValueType == 9 || secondValueType == 9) {
-            typeStack.push(9);
-            return;
-        }
-        typeStack.push(10);    
-    }
-    
-    public static void getEqualsOperatorCombination(int firstValueType, int secondValueType) throws SemanticError {
-
-        
-    }
-    
-    public static void getDifferentOperatorCombination(int firstValueType, int secondValueType) throws SemanticError {
-        
-
-        throw new SemanticError("Types not compatible");
-    }
-    
-    public static void getLessThanOperatorCombination(int firstValueType, int secondValueType) throws SemanticError {
-        
-
-        throw new SemanticError("Types not compatible");
-    }
-    
-    public static void getGreaterThanOperatorCombination(int firstValueType, int secondValueType) throws SemanticError {
-        
 
         throw new SemanticError("Types not compatible");
     }
