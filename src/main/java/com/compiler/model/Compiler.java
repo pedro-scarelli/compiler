@@ -44,8 +44,8 @@ public class Compiler {
             treatLexicalError(lexicalError);
         } catch ( SyntaticError syntaticError ) {
             treatSyntaticError(syntaticError);		
-        } catch ( SemanticError e ) {
-            resultFeedback = e.getMessage();
+        } catch ( SemanticError semanticError ) {
+            treatSemanticError(semanticError);
         }
     }
 
@@ -59,6 +59,11 @@ public class Compiler {
         var lexeme = syntaticError.getLexeme();
         lexeme = getLexemeOrEOF(syntaticError.getPosition(), lexeme);
         resultFeedback = "Erro na linha " + line + " - " + "encontrado " + lexeme + " " + syntaticError.getMessage();
+    }
+
+    private void treatSemanticError(SemanticError semanticError) {
+        var line = getLineFromPosition(semanticError.getPosition());
+        resultFeedback = "Erro na linha " + line + " - " + semanticError.getMessage();
     }
 
     private int getLineFromPosition(int position) {
