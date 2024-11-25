@@ -69,6 +69,7 @@ public class Semantic implements Constants
         return objectCode.toString();
     }
 
+    //pra testes
     public void setLength(int length) {
         objectCode.setLength(length);
     }
@@ -81,6 +82,10 @@ public class Semantic implements Constants
         typeStack.push(type);
     }
 
+    public void addSymbolsTable(String symbol) {
+        symbolTable.add(symbol);
+    }
+
     public String getRelationalOperator() {
         return relationalOperator;
     }
@@ -88,7 +93,7 @@ public class Semantic implements Constants
     public void setRelationalOperator(String operator) {
         relationalOperator = operator;
     }
-
+    //fim de metodos auxiliares para testes
     public static void method100() {
         var headers = """
             .assembly extern mscorlib {}

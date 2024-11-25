@@ -458,10 +458,54 @@ class SemanticTest {
             assertTrue(e.getMessage().contains("Types not compatible"));
         }
     }
-            
-    // @Test
-    // public void testAction127() {
 
-    // }
+    @Test
+    void testAction127IdNotDeclared() {
+        Token token = new Token(5, "f_var3", 38);
+
+        Exception exception = assertThrows(SemanticError.class, () -> {
+            semantic.executeAction(127, token);
+        });
+
+        assertEquals("f_var3 não declarado", exception.getMessage());
+    }
+
+    @Test
+    void testAction127PushCorrectTypeToStack() throws SemanticError {
+        semantic.addSymbolsTable("i_var1");
+        Token token = new Token(4, "i_var1", 38);
+        semantic.executeAction(127, token);
+
+        assertEquals("int64", semantic.popTypeStack());
+    }
+
+    @Test
+    void testAction127GenerateInt64Code() throws SemanticError {
+        semantic.addSymbolsTable("i_var1");
+        Token token = new Token(4, "i_var1", 38);
+        semantic.executeAction(127, token);
+
+        var expected = """
+            ldloc i_var1
+            conv.r8
+            """;
+        
+        assertEquals(expected, semantic.getObjectCode());
+    }
+
+    @Test
+    void testAction127GenerateFloat64Code() throws SemanticError {
+        semantic.addSymbolsTable("f_var2");
+        Token token = new Token(5, "f_var2", 38);
+        semantic.executeAction(127, token);
+
+
+        var expected = """
+            ldloc f_var2
+            """;
+        
+        assertEquals(expected, semantic.getObjectCode());
+        assertFalse(semantic.getObjectCode().contains("conv.r8"));
+    }
 }
 
