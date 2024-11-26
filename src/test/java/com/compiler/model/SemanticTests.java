@@ -45,7 +45,7 @@ class SemanticTest {
         }
 
         var expected = """
-            M1:ret
+            ret
                 }
             }
             """;
@@ -286,6 +286,83 @@ class SemanticTest {
             """;
         
         assertEquals(expected, semantic.getObjectCode());
+    }
+    
+    @Test
+    void testMethod109() {
+        Semantic.method109();
+
+        assertEquals(2, semantic.getLabelStackSize());
+        assertEquals("M1", semantic.popLabelFromStack());
+        assertEquals("M0", semantic.popLabelFromStack());
+
+        assertEquals("brfalse M1\n", semantic.getObjectCode());
+    }
+
+    @Test
+    void testMethod110() {
+        semantic.pushLabelToStack("M0");
+        semantic.pushLabelToStack("M1");
+
+        Semantic.method110();
+
+        assertEquals(1, semantic.getLabelStackSize());
+        assertEquals("M0", semantic.popLabelFromStack());
+
+        String expectedCode = "br M0\nM1:\n";
+        assertEquals(expectedCode, semantic.getObjectCode());
+    }
+
+    @Test
+    void testMethod111() {
+        semantic.pushLabelToStack("M0");
+
+        Semantic.method111();
+
+        assertTrue(semantic.isLabelStackEmpty());
+
+        assertEquals("M0:\n", semantic.getObjectCode());
+    }
+
+    @Test
+    void testMethod112() {
+        Semantic.method112();
+        assertEquals(1, semantic.getLabelStackSize());
+        assertEquals("M0", semantic.popLabelFromStack());
+
+        assertEquals("brfalse M0\n", semantic.getObjectCode());
+    }
+
+    @Test
+    void testMethod113() {
+        Semantic.method113();
+
+        assertEquals(1, semantic.getLabelStackSize());
+        assertEquals("M0", semantic.popLabelFromStack());
+
+        assertEquals("M0:\n", semantic.getObjectCode());
+    }
+
+    @Test
+    void testMethod114() {
+        semantic.pushLabelToStack("M0");
+
+        Semantic.method114();
+
+        assertTrue(semantic.isLabelStackEmpty());
+
+        assertEquals("brtrue M0\n", semantic.getObjectCode());
+    }
+
+    @Test
+    void testMethod115() {
+        semantic.pushLabelToStack("M0");
+
+        Semantic.method115();
+
+        assertTrue(semantic.isLabelStackEmpty());
+
+        assertEquals("brfalse M0\n", semantic.getObjectCode());
     }
     
     @Test

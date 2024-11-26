@@ -60,7 +60,6 @@ public class Semantic implements Constants
     public void executeAction(int action, Token token) throws SemanticError
     {
         currentToken = token;
-        System.out.println("ACTION #" + action + ", TOKEN: " + token);
         var methodAction = ACTIONS.get(action);
         methodAction.run();
     }
@@ -73,6 +72,7 @@ public class Semantic implements Constants
     public void clearState() {
         symbolTable.clear();
         idList.clear();
+        labelStack.clear();
         objectCode.setLength(0);
     }
 
@@ -115,6 +115,22 @@ public class Semantic implements Constants
     public boolean isIdListEmpty() {
         return idList.isEmpty();
     }
+
+    public int getLabelStackSize() {
+        return labelStack.size();
+    }
+
+    public String popLabelFromStack() {
+        return labelStack.pop();
+    }
+
+    public void pushLabelToStack(String label) {
+        labelStack.push(label);
+    }
+
+    public boolean isLabelStackEmpty() {
+        return labelStack.isEmpty();
+    }
     //fim de metodos auxiliares para testes
     public static void method100() {
         var headers = """
@@ -131,7 +147,7 @@ public class Semantic implements Constants
     
     public static void method101() {
         var endOfProgram = """
-            M1:ret
+            ret
                 }
             }
             """;
@@ -239,7 +255,7 @@ public class Semantic implements Constants
         var firstLabel = "M" + labelStack.size();
         labelStack.push(firstLabel);
         var secondLabel = "M" + labelStack.size();
-        objectCode.append(String.format("brfalse %s\n", firstLabel));
+        objectCode.append(String.format("brfalse %s\n", secondLabel));
         labelStack.push(secondLabel);
     }
     
