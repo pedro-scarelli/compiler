@@ -78,7 +78,7 @@ public class Semantic implements Constants
         objectCode.setLength(0);
     }
 
-    public static void method100() {
+    private static void method100() {
         var headers = """
             .assembly extern mscorlib {}
             .assembly _codigo_objeto{}
@@ -91,7 +91,7 @@ public class Semantic implements Constants
         objectCode.append(headers);
     }
     
-    public static void method101() {
+    private static void method101() {
         var endOfProgram = """
             ret
                 }
@@ -100,7 +100,7 @@ public class Semantic implements Constants
         objectCode.append(endOfProgram);
     }
     
-    public static void method102() throws SemanticError {
+    private static void method102() throws SemanticError {
         for (int i = 0; i < idList.size(); i++) {
             var id = idList.get(i);
             if (symbolTable.contains(id)) throw new SemanticError(currentToken.getLexeme() + " já declarado");
@@ -133,7 +133,7 @@ public class Semantic implements Constants
         return idParts[0];
     }
     
-    public static void method103() throws SemanticError {
+    private static void method103() throws SemanticError {
         var type = typeStack.pop();
         if (type == "int64") objectCode.append("conv.i8\n");
         for (int i = 0; i < idList.size() - 1; i++) {
@@ -149,11 +149,11 @@ public class Semantic implements Constants
         idList.clear();
     }
     
-    public static void method104() {
+    private static void method104() {
         idList.add(currentToken.getLexeme());
     }
     
-    public static void method105() throws SemanticError {
+    private static void method105() throws SemanticError {
         var id = currentToken.getLexeme();
         if (!symbolTable.contains(id)) throw new SemanticError(currentToken.getLexeme() + " não declarado");
     
@@ -179,16 +179,16 @@ public class Semantic implements Constants
         objectCode.append(String.format("stloc %s\n", currentToken.getLexeme()));
     }
     
-    public static void method106() {
+    private static void method106() {
         objectCode.append(String.format("ldstr \"%s\"\n", currentToken.getLexeme()));
         objectCode.append("call void [mscorlib]System.Console::Write(string)\n");
     }
     
-    public static void method107() {
+    private static void method107() {
         objectCode.append(String.format("ldstr %s\ncall void [mscorlib]System.Console::Write(string)\n", "\"\\n\""));
     }
     
-    public static void method108() {
+    private static void method108() {
         var tokenType = typeStack.pop();
 
         if (tokenType == "int64") objectCode.append("conv.i8\n");
@@ -197,7 +197,7 @@ public class Semantic implements Constants
         objectCode.append(String.format("call void [mscorlib]System.Console::Write(%s)\n", tokenType));
     }
     
-    public static void method109() {
+    private static void method109() {
         var firstLabel = createLabel();
         labelStack.push(firstLabel);
         var secondLabel = createLabel();
@@ -209,7 +209,7 @@ public class Semantic implements Constants
         return "M" + labelCounter++;
     }
     
-    public static void method110() {
+    private static void method110() {
         var secondLabel = labelStack.pop();
         var firstLabel = labelStack.pop();
         objectCode.append(String.format("br %s\n", firstLabel));
@@ -217,62 +217,62 @@ public class Semantic implements Constants
         objectCode.append(String.format("%s:\n", secondLabel));
     }
     
-    public static void method111() {
+    private static void method111() {
         var label = labelStack.pop();
         objectCode.append(String.format("%s:\n", label));
     }
     
-    public static void method112() {
+    private static void method112() {
         var label = createLabel();
         objectCode.append(String.format("brfalse %s\n", label));
         labelStack.push(label);
     }
     
-    public static void method113() {
+    private static void method113() {
         var label = createLabel();
         objectCode.append(String.format("%s:\n", label));
         labelStack.push(label);
     }
     
-    public static void method114() {
+    private static void method114() {
         var label = labelStack.pop();
         objectCode.append(String.format("brtrue %s\n", label));
     }
     
-    public static void method115() {
+    private static void method115() {
         var label = labelStack.pop();
         objectCode.append(String.format("brfalse %s\n", label));
     }
     
-    public static void method116() throws SemanticError {
+    private static void method116() throws SemanticError {
         pop2TypesAndPushCombination("&&");
         objectCode.append("and\n");
     }
     
-    public static void method117() throws SemanticError {
+    private static void method117() throws SemanticError {
         pop2TypesAndPushCombination("||");
         objectCode.append("or\n");
     }
     
-    public static void method118() throws SemanticError {
+    private static void method118() throws SemanticError {
         typeStack.push("bool");
         objectCode.append("ldc.i4 1\n");
     }
     
-    public static void method119() throws SemanticError {
+    private static void method119() throws SemanticError {
         typeStack.push("bool");
         objectCode.append("ldc.i4 0\n");
     }
     
-    public static void method120() throws SemanticError {
+    private static void method120() throws SemanticError {
         objectCode.append("ldc.i4 1\nxor\n");
     }
     
-    public static void method121() {
+    private static void method121() {
         relationalOperator = currentToken.getLexeme();
     }
     
-    public static void method122() throws SemanticError {
+    private static void method122() throws SemanticError {
         pop2TypesAndPushCombination(relationalOperator);
         switch(relationalOperator) {
             case "==":
@@ -293,25 +293,25 @@ public class Semantic implements Constants
         }
     }
     
-    public static void method123() throws SemanticError {
+    private static void method123() throws SemanticError {
         pop2TypesAndPushCombination("+");
         var addCode = "add\n";
         objectCode.append(addCode);
     }
     
-    public static void method124() throws SemanticError {
+    private static void method124() throws SemanticError {
         pop2TypesAndPushCombination("-");
         var subCode = "sub\n";
         objectCode.append(subCode);
     }
     
-    public static void method125() throws SemanticError {
+    private static void method125() throws SemanticError {
         pop2TypesAndPushCombination("*");
         var mulCode = "mul\n";
         objectCode.append(mulCode);
     }
     
-    public static void method126() throws SemanticError {
+    private static void method126() throws SemanticError {
         pop2TypesAndPushCombination("/");
         var divCode = "div\n";
         objectCode.append(divCode);
@@ -374,7 +374,7 @@ public class Semantic implements Constants
         throw new SemanticError("Types not compatible");
     }
 
-    public static void method127() throws SemanticError {
+    private static void method127() throws SemanticError {
         var lexeme = currentToken.getLexeme();
         if (!symbolTable.contains(lexeme)) throw new SemanticError(currentToken.getLexeme() + " não declarado");
 
@@ -385,23 +385,23 @@ public class Semantic implements Constants
         if (varType.equals("int64")) objectCode.append("conv.r8\n");
     }
     
-    public static void method128() {
+    private static void method128() {
         typeStack.push("int64");
         objectCode.append(String.format("ldc.i8 %s\nconv.r8\n", currentToken.getLexeme()));
     }
     
-    public static void method129() {
+    private static void method129() {
         typeStack.push("float64");
         var doubleValue = currentToken.getLexeme().replace(",", ".");
         objectCode.append(String.format("ldc.r8 %s\n", doubleValue));
     }
     
-    public static void method130() {
+    private static void method130() {
         typeStack.push("string");
         objectCode.append(String.format("ldstr %s\n", currentToken.getLexeme()));
     }
     
-    public static void method131() {
+    private static void method131() {
         objectCode.append(String.format("ldc.r8 -1.0\nmul\n", currentToken.getLexeme()));
     }
 

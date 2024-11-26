@@ -39,7 +39,7 @@ class SemanticTest {
     @Test
     void testAction101() {
         try {
-            semantic.executeAction(101, new Token(16, "end", 38));
+            semantic.executeAction(101, new Token(16, "end", 0));
         } catch (SemanticError e) {
             e.printStackTrace();
         }
@@ -62,7 +62,7 @@ class SemanticTest {
         semantic.addIdToList("s_teste");
         semantic.addIdToList("b_oolean");
 
-        var token = new Token(3, "i_area", 1);
+        var token = new Token(3, "i_area", 0);
 
         assertDoesNotThrow(() -> semantic.executeAction(102, token));
 
@@ -87,7 +87,7 @@ class SemanticTest {
         semantic.addSymbolsTable("i_existingvar");
         semantic.addIdToList("i_existingvar");
 
-        var token = new Token(3, "i_existingvar", 1);
+        var token = new Token(3, "i_existingvar", 0);
 
         var exception = assertThrows(SemanticError.class, () -> semantic.executeAction(102, token));
         assertEquals("i_existingvar já declarado", exception.getMessage());
@@ -105,7 +105,7 @@ class SemanticTest {
 
         semantic.pushTypeStack("int64");
 
-        var token = new Token(3, "i_var", 1);
+        var token = new Token(3, "i_var", 0);
 
         assertDoesNotThrow(() -> semantic.executeAction(103, token));
         var expectedObjectCode = """
@@ -132,7 +132,7 @@ class SemanticTest {
 
         semantic.pushTypeStack("int64");
 
-        var token = new Token(3, "b_active", 1);
+        var token = new Token(3, "b_active", 0);
         var exception = assertThrows(SemanticError.class, () -> semantic.executeAction(103, token));
 
         assertEquals("b_active não declarado", exception.getMessage());
@@ -142,15 +142,14 @@ class SemanticTest {
 
     @Test
     void testAction104() throws SemanticError {
-        var token = new Token(3, "s_teste", 38);
-        semantic.executeAction(104, token);
+        semantic.executeAction(104, new Token(3, "s_teste", 0));
         
         assertTrue(semantic.idListContains("s_teste"));
     }
 
     @Test
     void testAction105_IdNotDeclared() throws SemanticError {
-        var token = new Token(3, "s_teste", 38);
+        var token = new Token(3, "s_teste", 0);
         var exception = assertThrows(SemanticError.class, () -> semantic.executeAction(105, token));
 
         assertEquals("s_teste não declarado", exception.getMessage());
@@ -159,8 +158,7 @@ class SemanticTest {
     @Test
     void testAction105String() throws SemanticError {
         semantic.addSymbolsTable("s_text");
-        var token = new Token(3, "s_text", 38);
-        semantic.executeAction(105, token);
+        semantic.executeAction(105, new Token(3, "s_text", 0));
         var expected = """
             call string [mscorlib] System.Console::ReadLine()
             stloc s_text
@@ -172,8 +170,7 @@ class SemanticTest {
     @Test
     void testAction105Int() throws SemanticError {
         semantic.addSymbolsTable("i_size");
-        var token = new Token(3, "i_size", 38);
-        semantic.executeAction(105, token);
+        semantic.executeAction(105, new Token(3, "i_size", 0));
         var expected = """
             call string [mscorlib] System.Console::ReadLine()
             call int64 [mscorlib] System.Int64::Parse(string)
@@ -186,8 +183,7 @@ class SemanticTest {
     @Test
     void testAction105Float() throws SemanticError {
         semantic.addSymbolsTable("f_area");
-        var token = new Token(3, "f_area", 38);
-        semantic.executeAction(105, token);
+        semantic.executeAction(105, new Token(3, "f_area", 0));
         var expected = """
             call string [mscorlib] System.Console::ReadLine()
             call float64 [mscorlib] System.Double::Parse(string)
@@ -200,8 +196,7 @@ class SemanticTest {
     @Test
     void testAction105Boolean() throws SemanticError {
         semantic.addSymbolsTable("b_active");
-        var token = new Token(3, "b_active", 38);
-        semantic.executeAction(105, token);
+        semantic.executeAction(105, new Token(3, "b_active", 0));
         var expected = """
             call string [mscorlib] System.Console::ReadLine()
             call bool [mscorlib] System.Boolean::Parse(string)
@@ -213,10 +208,9 @@ class SemanticTest {
 
     @Test
     void testAction106() throws SemanticError {
-        var token = new Token(6, "teste", 38);
-        semantic.executeAction(106, token);
+        semantic.executeAction(106, new Token(6, "test", 0));
         var expected = """
-            ldstr "teste"
+            ldstr "test"
             call void [mscorlib]System.Console::Write(string)
             """;
         
@@ -224,8 +218,8 @@ class SemanticTest {
     }
 
     @Test
-    void testAction107() {
-        Semantic.method107();
+    void testAction107() throws SemanticError {
+        semantic.executeAction(107, new Token(6,"test", 0));
 
         var expected = """
             ldstr "\\n"
@@ -238,8 +232,7 @@ class SemanticTest {
     @Test
     void testAction108Int64() throws SemanticError {
         semantic.pushTypeStack("int64");
-        var token = new Token(4, "1", 38);
-        semantic.executeAction(108, token);
+        semantic.executeAction(108, new Token(4, "1", 0));
 
         var expected = """
             conv.i8
@@ -252,8 +245,7 @@ class SemanticTest {
     @Test
     void testAction108Boolean() throws SemanticError {
         semantic.pushTypeStack("bool");
-        var token = new Token(9, "true", 38);
-        semantic.executeAction(108, token);
+        semantic.executeAction(108, new Token(9, "true", 0));
 
         var expected = """
             call void [mscorlib]System.Console::Write(boolean)
@@ -265,8 +257,7 @@ class SemanticTest {
     @Test
     void testAction108Float64() throws SemanticError {
         semantic.pushTypeStack("float64");
-        var token = new Token(5, "2.0", 38);
-        semantic.executeAction(108, token);
+        semantic.executeAction(108, new Token(5, "1.0", 0));
 
         var expected = """
             call void [mscorlib]System.Console::Write(float64)
@@ -278,8 +269,7 @@ class SemanticTest {
     @Test
     void testAction108String() throws SemanticError {
         semantic.pushTypeStack("string");
-        var token = new Token(6, "teste", 38);
-        semantic.executeAction(108, token);
+        semantic.executeAction(108, new Token(6, "test", 0));
 
         var expected = """
             call void [mscorlib]System.Console::Write(string)
@@ -289,8 +279,8 @@ class SemanticTest {
     }
     
     @Test
-    void testMethod109() {
-        Semantic.method109();
+    void testMethod109() throws SemanticError {
+        semantic.executeAction(109, new Token(5, "1.0", 0));
 
         assertEquals(2, semantic.getLabelStackSize());
         assertEquals("M1", semantic.popLabelFromStack());
@@ -300,11 +290,11 @@ class SemanticTest {
     }
 
     @Test
-    void testMethod110() {
+    void testMethod110() throws SemanticError {
         semantic.pushLabelToStack("M0");
         semantic.pushLabelToStack("M1");
 
-        Semantic.method110();
+        semantic.executeAction(110, new Token(5, "1.0", 0));
 
         assertEquals(1, semantic.getLabelStackSize());
         assertEquals("M0", semantic.popLabelFromStack());
@@ -314,10 +304,10 @@ class SemanticTest {
     }
 
     @Test
-    void testMethod111() {
+    void testMethod111() throws SemanticError {
         semantic.pushLabelToStack("M0");
 
-        Semantic.method111();
+        semantic.executeAction(111, new Token(5, "1.0", 0));
 
         assertTrue(semantic.isLabelStackEmpty());
 
@@ -325,8 +315,8 @@ class SemanticTest {
     }
 
     @Test
-    void testMethod112() {
-        Semantic.method112();
+    void testMethod112() throws SemanticError {
+        semantic.executeAction(112, new Token(5, "1.0", 0));
         assertEquals(1, semantic.getLabelStackSize());
         assertEquals("M0", semantic.popLabelFromStack());
 
@@ -334,8 +324,8 @@ class SemanticTest {
     }
 
     @Test
-    void testMethod113() {
-        Semantic.method113();
+    void testMethod113() throws SemanticError {
+        semantic.executeAction(113, new Token(5, "1.0", 0));
 
         assertEquals(1, semantic.getLabelStackSize());
         assertEquals("M0", semantic.popLabelFromStack());
@@ -344,10 +334,10 @@ class SemanticTest {
     }
 
     @Test
-    void testMethod114() {
+    void testMethod114() throws SemanticError {
         semantic.pushLabelToStack("M0");
 
-        Semantic.method114();
+        semantic.executeAction(114, new Token(5, "1.0", 0));
 
         assertTrue(semantic.isLabelStackEmpty());
 
@@ -355,10 +345,10 @@ class SemanticTest {
     }
 
     @Test
-    void testMethod115() {
+    void testMethod115() throws SemanticError {
         semantic.pushLabelToStack("M0");
 
-        Semantic.method115();
+        semantic.executeAction(115, new Token(5, "1.0", 0));
 
         assertTrue(semantic.isLabelStackEmpty());
 
@@ -369,7 +359,7 @@ class SemanticTest {
     public void testMethod116() throws SemanticError {
         semantic.pushTypeStack("bool");
         semantic.pushTypeStack("bool");
-        Semantic.method116();
+        semantic.executeAction(116, new Token(9, "true", 0));
 
         assertEquals("and\n", semantic.getObjectCode());
     }
@@ -378,7 +368,7 @@ class SemanticTest {
     public void testMethod117() throws SemanticError {
         semantic.pushTypeStack("bool");
         semantic.pushTypeStack("bool");
-        Semantic.method117();
+        semantic.executeAction(117, new Token(9, "true", 0));
 
         assertEquals("or\n", semantic.getObjectCode());
     }
@@ -386,7 +376,7 @@ class SemanticTest {
     @Test
     void testAction118() {
         try {
-            semantic.executeAction(118, new Token(9, "true", 38));
+            semantic.executeAction(118, new Token(9, "true", 0));
         } catch (SemanticError e) { e.printStackTrace(); }
 
         var expected = """
@@ -400,7 +390,7 @@ class SemanticTest {
     @Test
     void testAction119() {
         try {
-            semantic.executeAction(119, new Token(10, "false", 38));
+            semantic.executeAction(119, new Token(10, "false", 0));
         } catch (SemanticError e) { e.printStackTrace(); }
 
         var expected = """
@@ -414,7 +404,7 @@ class SemanticTest {
     @Test
     void testAction120() {
         try {
-            semantic.executeAction(120, new Token(10, "false", 38));
+            semantic.executeAction(120, new Token(10, "false", 0));
         } catch (SemanticError e) { e.printStackTrace(); }
     
         var expected = """
@@ -428,7 +418,7 @@ class SemanticTest {
     @Test
     void testAction121() {
         try {
-            semantic.executeAction(121, new Token(23, "==", 38));
+            semantic.executeAction(121, new Token(23, "==", 0));
         } catch (SemanticError e) { e.printStackTrace(); }
     
         var expected = "==";
@@ -444,7 +434,7 @@ class SemanticTest {
             
             semantic.setRelationalOperator("==");
             
-            Semantic.method122();
+            semantic.executeAction(122, new Token(4, "1", 0));
         } catch (SemanticError e) { e.printStackTrace(); }
 
         var expectedCode = """
@@ -462,7 +452,7 @@ class SemanticTest {
             
             semantic.setRelationalOperator("!=");
             
-            Semantic.method122();
+            semantic.executeAction(122, new Token(4, "1", 0));
         } catch (SemanticError e) { e.printStackTrace(); }
 
         var expectedCode = """
@@ -482,7 +472,7 @@ class SemanticTest {
             
             semantic.setRelationalOperator(">");
             
-            Semantic.method122();
+            semantic.executeAction(122, new Token(4, "1", 0));
         } catch (SemanticError e) {
             e.printStackTrace();
         }
@@ -502,7 +492,7 @@ class SemanticTest {
             
             semantic.setRelationalOperator("<");
             
-            Semantic.method122();
+            semantic.executeAction(122, new Token(4, "1", 0));
         } catch (SemanticError e) {
             e.printStackTrace();
         }
@@ -522,7 +512,7 @@ class SemanticTest {
             
             semantic.setRelationalOperator("&");
             
-            Semantic.method122();
+            semantic.executeAction(122, new Token(4, "1", 0));
             fail("Expected SemanticError due to invalid relational operator");
         } catch (SemanticError e) {
             assertTrue(e.getMessage().contains("Unrecognized operator"));
@@ -534,7 +524,7 @@ class SemanticTest {
         try {
             semantic.pushTypeStack("int64");
             semantic.pushTypeStack("int64");
-            Semantic.method123();
+            semantic.executeAction(123, new Token(4, "1", 0));
         } catch (SemanticError e) { e.printStackTrace(); }
     
         var expected = """
@@ -550,7 +540,7 @@ class SemanticTest {
         try {
             semantic.pushTypeStack("int64");
             semantic.pushTypeStack("int64");
-            Semantic.method124();
+            semantic.executeAction(124, new Token(4, "1", 0));
         } catch (SemanticError e) { e.printStackTrace(); }
     
         var expected = """
@@ -566,7 +556,7 @@ class SemanticTest {
         try {
             semantic.pushTypeStack("int64");
             semantic.pushTypeStack("int64");
-            Semantic.method125();
+            semantic.executeAction(125, new Token(4, "1", 0));
         } catch (SemanticError e) { e.printStackTrace(); }
     
         var expected = """
@@ -582,7 +572,7 @@ class SemanticTest {
         try {
             semantic.pushTypeStack("int64");
             semantic.pushTypeStack("int64");
-            Semantic.method126();
+            semantic.executeAction(126, new Token(4, "1", 0));
         } catch (SemanticError e) { e.printStackTrace(); }
     
         var expected = """
@@ -595,7 +585,7 @@ class SemanticTest {
 
     @Test
     void testAction127IdNotDeclared() {
-        Token token = new Token(5, "f_var3", 38);
+        Token token = new Token(3, "f_var3", 38);
 
         Exception exception = assertThrows(SemanticError.class, () -> {
             semantic.executeAction(127, token);
@@ -607,7 +597,7 @@ class SemanticTest {
     @Test
     void testAction127PushCorrectTypeToStack() throws SemanticError {
         semantic.addSymbolsTable("i_var1");
-        Token token = new Token(4, "i_var1", 38);
+        Token token = new Token(3, "i_var1", 38);
         semantic.executeAction(127, token);
 
         assertEquals("int64", semantic.popTypeStack());
@@ -616,7 +606,7 @@ class SemanticTest {
     @Test
     void testAction127GenerateInt64Code() throws SemanticError {
         semantic.addSymbolsTable("i_var1");
-        Token token = new Token(4, "i_var1", 38);
+        Token token = new Token(3, "i_var1", 38);
         semantic.executeAction(127, token);
 
         var expected = """
@@ -630,7 +620,7 @@ class SemanticTest {
     @Test
     void testAction127GenerateFloat64Code() throws SemanticError {
         semantic.addSymbolsTable("f_var2");
-        var token = new Token(5, "f_var2", 38);
+        var token = new Token(3, "f_var2", 38);
         semantic.executeAction(127, token);
 
 
@@ -645,7 +635,7 @@ class SemanticTest {
     @Test
     void testAction128() {
         try {
-            semantic.executeAction(128, new Token(4, "1", 38));
+            semantic.executeAction(128, new Token(4, "1", 0));
         } catch (SemanticError e) { e.printStackTrace(); }
 
         var expected = """
@@ -660,7 +650,7 @@ class SemanticTest {
     @Test
     void testAction129() {
         try {
-            semantic.executeAction(129, new Token(5, "1.0", 38));
+            semantic.executeAction(129, new Token(5, "1.0", 0));
         } catch (SemanticError e) { e.printStackTrace(); }
 
         var expected = """
@@ -674,11 +664,11 @@ class SemanticTest {
     @Test
     void testAction130() {
         try {
-            semantic.executeAction(130, new Token(6, "\"teste string\"", 38));
+            semantic.executeAction(130, new Token(6, "\"test string\"", 0));
         } catch (SemanticError e) { e.printStackTrace(); }
 
         var expected = """
-            ldstr "teste string"
+            ldstr "test string"
             """;
 
         assertEquals(expected, semantic.getObjectCode());
@@ -688,7 +678,7 @@ class SemanticTest {
     @Test
     void testAction131() {
         try {
-            semantic.executeAction(131, new Token(4, "7", 38));
+            semantic.executeAction(131, new Token(4, "1", 0));
         } catch (SemanticError e) { e.printStackTrace(); }
 
         var expected = """
@@ -740,25 +730,29 @@ class SemanticTest {
             semantic.pushTypeStack("int64");
             semantic.pushTypeStack("int64");
             semantic.setRelationalOperator(">");
-            Semantic.method122();
+            
+            semantic.executeAction(122, new Token(4, "1", 0));
             assertEquals("bool", semantic.popTypeStack());
 
             semantic.pushTypeStack("int64");
             semantic.pushTypeStack("int64");
             semantic.setRelationalOperator("<");
-            Semantic.method122();
+            
+            semantic.executeAction(122, new Token(4, "1", 0));
             assertEquals("bool", semantic.popTypeStack());
 
             semantic.pushTypeStack("float64");
             semantic.pushTypeStack("float64");
             semantic.setRelationalOperator(">");
-            Semantic.method122();
+            
+            semantic.executeAction(122, new Token(4, "1", 0));
             assertEquals("bool", semantic.popTypeStack());
 
             semantic.pushTypeStack("string");
             semantic.pushTypeStack("string");
             semantic.setRelationalOperator("==");
-            Semantic.method122();
+            
+            semantic.executeAction(122, new Token(4, "1", 0));
             assertEquals("bool", semantic.popTypeStack());
             
         } catch (SemanticError e) { e.printStackTrace(); }
@@ -770,7 +764,7 @@ class SemanticTest {
             semantic.pushTypeStack("int64");
             semantic.pushTypeStack("float64");
             semantic.setRelationalOperator("&&");
-            Semantic.method122();
+            semantic.executeAction(122, new Token(5, "1.0", 0));
             fail("Expected SemanticError due to invalid relational operator");
         } catch (SemanticError e) {
             assertTrue(e.getMessage().contains("Types not compatible"));
@@ -783,7 +777,7 @@ class SemanticTest {
             semantic.pushTypeStack("int64");
             semantic.pushTypeStack("string");
             semantic.setRelationalOperator("&&");
-            Semantic.method122();
+            semantic.executeAction(122, new Token(6, "test", 0));
             fail("Expected SemanticError due to invalid relational operator");
         } catch (SemanticError e) {
             assertTrue(e.getMessage().contains("Types not compatible"));
@@ -796,7 +790,7 @@ class SemanticTest {
             semantic.pushTypeStack("string");
             semantic.pushTypeStack("float64");
             semantic.setRelationalOperator("&&");
-            Semantic.method122();
+            semantic.executeAction(122, new Token(5, "1.0", 0));
             fail("Expected SemanticError due to invalid relational operator");
         } catch (SemanticError e) {
             assertTrue(e.getMessage().contains("Types not compatible"));
@@ -812,7 +806,7 @@ class SemanticTest {
         semantic.pushTypeStack("bool");
 
         try {
-            Semantic.method117();
+            semantic.executeAction(117, new Token(9, "true", 0));
             fail("Expected SemanticError due to incompatible types");
         } catch (SemanticError e) {
             assertTrue(e.getMessage().contains("Types not compatible"));
