@@ -106,7 +106,7 @@ public class Semantic implements Constants
     private static void method102() throws SemanticError {
         for (int i = 0; i < idList.size(); i++) {
             var id = idList.get(i);
-            if (symbolsTable.contains(id)) throw new SemanticError(currentToken.getLexeme() + " já declarado");
+            if (symbolsTable.contains(id)) throw new SemanticError(currentToken.getLexeme() + " já declarado", currentToken.getPosition());
 
             symbolsTable.add(id);
             var varType = getVariableTypeByName(id);
@@ -127,7 +127,7 @@ public class Semantic implements Constants
             case "b":
                 return "bool";
             default:
-                throw new SemanticError("Variable identifier incorrect");
+                throw new SemanticError("Variable identifier incorrect", currentToken.getPosition());
         }
     }
 
@@ -145,7 +145,7 @@ public class Semantic implements Constants
 
         for (int i = 0; i < idList.size(); i++) {
             var id = idList.get(i);
-            if (!symbolsTable.contains(id)) throw new SemanticError(currentToken.getLexeme() + " não declarado");
+            if (!symbolsTable.contains(id)) throw new SemanticError(currentToken.getLexeme() + " não declarado", currentToken.getPosition());
 
             objectCode.append(String.format("stloc %s\n", id));
         }
@@ -158,7 +158,7 @@ public class Semantic implements Constants
     
     private static void method105() throws SemanticError {
         var id = currentToken.getLexeme();
-        if (!symbolsTable.contains(id)) throw new SemanticError(currentToken.getLexeme() + " não declarado");
+        if (!symbolsTable.contains(id)) throw new SemanticError(currentToken.getLexeme() + " não declarado", currentToken.getPosition());
     
         objectCode.append("call string [mscorlib] System.Console::ReadLine()\n");
 
@@ -188,6 +188,7 @@ public class Semantic implements Constants
     }
     
     private static void method107() {
+        
         objectCode.append(String.format("ldstr %s\ncall void [mscorlib]System.Console::Write(string)\n", "\"\\n\""));
     }
     
@@ -292,7 +293,7 @@ public class Semantic implements Constants
                 objectCode.append("clt\n");
             break;
             default:
-                throw new SemanticError("Relational operator incorrect");
+                throw new SemanticError("Relational operator incorrect", currentToken.getPosition());
         }
     }
     
@@ -338,19 +339,19 @@ public class Semantic implements Constants
             case "!=": 
             case "<": 
             case ">": getRelationalCombination(firstValueType, secondValueType); break;
-            default: throw new SemanticError("Unrecognized operator");
+            default: throw new SemanticError("Unrecognized operator", currentToken.getPosition());
         }
     }
 
     private static void getAndOrCombination(String firstValueType, String secondValueType) throws SemanticError {
         if(!firstValueType.equals("bool") || !secondValueType.equals("bool"))
-            throw new SemanticError("Types not compatible");
+            throw new SemanticError("Types not compatible", currentToken.getPosition());
         pushBooleanTypeToStack();
     }
 
     private static void getRelationalCombination(String firstValueType, String secondValueType) throws SemanticError {
         if(isTypesValidForRelationalOperation(firstValueType, secondValueType))
-            throw new SemanticError("Types not compatible");
+            throw new SemanticError("Types not compatible", currentToken.getPosition());
         pushBooleanTypeToStack();
     }
 
@@ -374,13 +375,14 @@ public class Semantic implements Constants
             return;
         }
 
-        throw new SemanticError("Types not compatible");
+        throw new SemanticError("Types not compatible", currentToken.getPosition());
     }
 
     private static void method127() throws SemanticError {
         var lexeme = currentToken.getLexeme();
-        if (!symbolsTable.contains(lexeme)) throw new SemanticError(currentToken.getLexeme() + " não declarado");
-
+        if (!symbolsTable.contains(lexeme)) {
+            throw new SemanticError(currentToken.getLexeme() + " não declarado", currentToken.getPosition());
+        }
         var varType = getVariableTypeByName(lexeme);
         typeStack.push(varType);
 
@@ -467,5 +469,9 @@ public class Semantic implements Constants
 
     public static void getAndOrCombinationTest(String firstValueType, String secondValueType) throws SemanticError {
         getAndOrCombination(firstValueType, secondValueType);
+    }
+
+    public void setToken(Token token) {
+        currentToken = token;
     }
 }

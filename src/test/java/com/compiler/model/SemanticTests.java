@@ -715,6 +715,7 @@ class SemanticTest {
             semantic.pushTypeStack("int64");
             semantic.pushTypeStack("string");
             try {
+                semantic.setToken(new Token(4, "1", 0));
                 Semantic.pop2TypesAndPushCombinationTest("+");
                 fail("Expected SemanticError due to incompatible types");
             } catch (SemanticError e) {
