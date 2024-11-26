@@ -20,6 +20,8 @@ public class Semantic implements Constants
     private static List<String> idList = new ArrayList<>();
     private static Set<String> symbolTable = new HashSet<>();
 
+    private static int labelCounter = 0;
+
     private static final Map<Integer, ActionWithException> ACTIONS = new HashMap<>();
         
     static {
@@ -67,71 +69,15 @@ public class Semantic implements Constants
     public String getObjectCode() {
         return objectCode.toString();
     }
-
-    //pra testes
+    
     public void clearState() {
+        labelCounter = 0;
         symbolTable.clear();
         idList.clear();
         labelStack.clear();
         objectCode.setLength(0);
     }
 
-    public void setLength(int length) {
-        objectCode.setLength(length);
-    }
-
-    public String popTypeStack() {
-        return typeStack.pop();
-    }
-
-    public void pushTypeStack(String type) {
-        typeStack.push(type);
-    }
-
-    public void addSymbolsTable(String symbol) {
-        symbolTable.add(symbol);
-    }
-
-    public boolean symbolsTableContains(String id) {
-        return symbolTable.contains(id);
-    }
-
-    public String getRelationalOperator() {
-        return relationalOperator;
-    }
-
-    public void setRelationalOperator(String operator) {
-        relationalOperator = operator;
-    }
-
-    public boolean idListContains(String id) {
-        return idList.contains(id);
-    }
-
-    public void addIdToList(String id) {
-        idList.add(id);
-    }
-
-    public boolean isIdListEmpty() {
-        return idList.isEmpty();
-    }
-
-    public int getLabelStackSize() {
-        return labelStack.size();
-    }
-
-    public String popLabelFromStack() {
-        return labelStack.pop();
-    }
-
-    public void pushLabelToStack(String label) {
-        labelStack.push(label);
-    }
-
-    public boolean isLabelStackEmpty() {
-        return labelStack.isEmpty();
-    }
-    //fim de metodos auxiliares para testes
     public static void method100() {
         var headers = """
             .assembly extern mscorlib {}
@@ -252,11 +198,15 @@ public class Semantic implements Constants
     }
     
     public static void method109() {
-        var firstLabel = "M" + labelStack.size();
+        var firstLabel = createLabel();
         labelStack.push(firstLabel);
-        var secondLabel = "M" + labelStack.size();
+        var secondLabel = createLabel();
         objectCode.append(String.format("brfalse %s\n", secondLabel));
         labelStack.push(secondLabel);
+    }
+
+    private static String createLabel() {
+        return "M" + labelCounter++;
     }
     
     public static void method110() {
@@ -273,13 +223,13 @@ public class Semantic implements Constants
     }
     
     public static void method112() {
-        var label = "M" + labelStack.size();
+        var label = createLabel();
         objectCode.append(String.format("brfalse %s\n", label));
         labelStack.push(label);
     }
     
     public static void method113() {
-        var label = "M" + labelStack.size();
+        var label = createLabel();
         objectCode.append(String.format("%s:\n", label));
         labelStack.push(label);
     }
@@ -453,5 +403,62 @@ public class Semantic implements Constants
     
     public static void method131() {
         objectCode.append(String.format("ldc.r8 -1.0\nmul\n", currentToken.getLexeme()));
+    }
+
+    //testing methods
+    public void setLength(int length) {
+        objectCode.setLength(length);
+    }
+
+    public String popTypeStack() {
+        return typeStack.pop();
+    }
+
+    public void pushTypeStack(String type) {
+        typeStack.push(type);
+    }
+
+    public void addSymbolsTable(String symbol) {
+        symbolTable.add(symbol);
+    }
+
+    public boolean symbolsTableContains(String id) {
+        return symbolTable.contains(id);
+    }
+
+    public String getRelationalOperator() {
+        return relationalOperator;
+    }
+
+    public void setRelationalOperator(String operator) {
+        relationalOperator = operator;
+    }
+
+    public boolean idListContains(String id) {
+        return idList.contains(id);
+    }
+
+    public void addIdToList(String id) {
+        idList.add(id);
+    }
+
+    public boolean isIdListEmpty() {
+        return idList.isEmpty();
+    }
+
+    public int getLabelStackSize() {
+        return labelStack.size();
+    }
+
+    public String popLabelFromStack() {
+        return labelStack.pop();
+    }
+
+    public void pushLabelToStack(String label) {
+        labelStack.push(label);
+    }
+
+    public boolean isLabelStackEmpty() {
+        return labelStack.isEmpty();
     }
 }
