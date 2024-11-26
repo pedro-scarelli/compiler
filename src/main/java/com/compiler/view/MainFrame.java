@@ -262,12 +262,12 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_newFileBtnActionPerformed
 
     private void openFileBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openFileBtnActionPerformed
-        JFileChooser fileChooser = new JFileChooser();
+        var fileChooser = new JFileChooser();
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         var returnedValue = fileChooser.showOpenDialog(this);
         
         if (returnedValue == JFileChooser.APPROVE_OPTION) {
-            File selectedFile = fileChooser.getSelectedFile();
+            var selectedFile = fileChooser.getSelectedFile();
             isTxtFileAndsetTextFromFile(selectedFile);
             return;
         } 

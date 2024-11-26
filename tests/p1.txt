@@ -1,0 +1,14 @@
+>@
+Pedro Virissimo Scarelli
+@<
+main
+i_basemenor, i_basemaior, i_altura, i_area;
+
+read(i_basemaior);
+read(i_basemenor);
+read(i_altura);
+
+i_area = (i_basemaior + i_basemenor) * i_altura / 2;
+
+write(i_area);
+end

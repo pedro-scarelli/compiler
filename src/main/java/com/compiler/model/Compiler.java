@@ -22,6 +22,7 @@ public class Compiler {
         this.lexical = new Lexical();
         this.syntatic = new Syntatic();
         this.semantic = new Semantic();
+        semantic.clearState();
 
         this.sourceCode = sourceCode;
         this.fileManager = fileManager;

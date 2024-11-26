@@ -1,0 +1,21 @@
+>@
+Pedro Virissimo Scarelli
+@<
+main
+i_mes;
+
+read(i_mes);
+repeat writeln("valor invalido, digitar um valor entre 1 e 12: ");
+read(i_mes);
+while i_mes <  1 || i_mes > 12;
+
+if(i_mes < 4)
+write("primeiro trimestre");
+elif(i_mes < 7)
+write("segundo trimestre");
+elif(i_mes < 10)
+write("terceiro trimestre");
+else
+write("quarto trimestre");
+end;
+end

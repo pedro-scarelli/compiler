@@ -1,0 +1,20 @@
+>@
+Pedro Virissimo Scarelli
+@<
+
+main
+i_nascimento, i_anoatual, i_idade;
+
+i_anoatual = 2024;
+write("digite seu ano de nascimento: ");
+read(i_nascimento);
+
+i_idade = i_anoatual - i_nascimento;
+if(i_idade < 12)
+write("pré-mirim a petiz");
+elif(i_idade < 19)
+write("infantil a júnior");
+else
+write("sênior");
+end;
+end 
