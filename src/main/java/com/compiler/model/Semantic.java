@@ -201,23 +201,24 @@ public class Semantic implements Constants
         var varClass = "";
         switch(varType) {
             case "string":
-            return;
+                objectCode.append(String.format("stloc %s\n", currentToken.getLexeme()));
+                return;
             case "int64":
                 varClass = "Int64";
-            break;
+                break;
             case "float64":
                 varClass = "Double";
-            break;
+                break;
             case "bool":
                 varClass = "Boolean";
-            break;
+                break;
         }
         objectCode.append(String.format("call %s [mscorlib] System.%s::Parse(string)\n", varType, varClass));
         objectCode.append(String.format("stloc %s\n", currentToken.getLexeme()));
     }
     
     public static void method106() {
-        objectCode.append(String.format("ldstr %s\n", currentToken.getLexeme()));
+        objectCode.append(String.format("ldstr \"%s\"\n", currentToken.getLexeme()));
         objectCode.append("call void [mscorlib]System.Console::Write(string)\n");
     }
     

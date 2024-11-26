@@ -1,6 +1,5 @@
 package com.compiler.model;
 
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -147,6 +146,81 @@ class SemanticTest {
         semantic.executeAction(104, token);
         
         assertTrue(semantic.idListContains("s_teste"));
+    }
+
+    @Test
+    void testAction105_IdNotDeclared() throws SemanticError {
+        var token = new Token(3, "s_teste", 38);
+        var exception = assertThrows(SemanticError.class, () -> semantic.executeAction(105, token));
+
+        assertEquals("s_teste não declarado", exception.getMessage());
+    }
+
+    @Test
+    void testAction105String() throws SemanticError {
+        semantic.addSymbolsTable("s_text");
+        var token = new Token(3, "s_text", 38);
+        semantic.executeAction(105, token);
+        var expected = """
+            call string [mscorlib] System.Console::ReadLine()
+            stloc s_text
+            """;
+
+        assertEquals(expected, semantic.getObjectCode());
+    }
+
+    @Test
+    void testAction105Int() throws SemanticError {
+        semantic.addSymbolsTable("i_size");
+        var token = new Token(3, "i_size", 38);
+        semantic.executeAction(105, token);
+        var expected = """
+            call string [mscorlib] System.Console::ReadLine()
+            call int64 [mscorlib] System.Int64::Parse(string)
+            stloc i_size
+            """;
+
+        assertEquals(expected, semantic.getObjectCode());
+    }
+
+    @Test
+    void testAction105Float() throws SemanticError {
+        semantic.addSymbolsTable("f_area");
+        var token = new Token(3, "f_area", 38);
+        semantic.executeAction(105, token);
+        var expected = """
+            call string [mscorlib] System.Console::ReadLine()
+            call float64 [mscorlib] System.Double::Parse(string)
+            stloc f_area
+            """;
+
+        assertEquals(expected, semantic.getObjectCode());
+    }
+
+    @Test
+    void testAction105Boolean() throws SemanticError {
+        semantic.addSymbolsTable("b_active");
+        var token = new Token(3, "b_active", 38);
+        semantic.executeAction(105, token);
+        var expected = """
+            call string [mscorlib] System.Console::ReadLine()
+            call bool [mscorlib] System.Boolean::Parse(string)
+            stloc b_active
+            """;
+
+        assertEquals(expected, semantic.getObjectCode());
+    }
+
+    @Test
+    void testAction106() throws SemanticError {
+        var token = new Token(6, "teste", 38);
+        semantic.executeAction(106, token);
+        var expected = """
+            ldstr "teste"
+            call void [mscorlib]System.Console::Write(string)
+            """;
+        
+        assertEquals(expected, semantic.getObjectCode());
     }
 
     @Test
