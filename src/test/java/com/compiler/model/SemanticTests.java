@@ -694,28 +694,28 @@ class SemanticTest {
         try {
             semantic.pushTypeStack("int64");
             semantic.pushTypeStack("int64");
-            Semantic.pop2TypesAndPushCombination("+");
+            Semantic.pop2TypesAndPushCombinationTest("+");
             assertEquals("int64", semantic.popTypeStack());
 
             semantic.pushTypeStack("float64");
             semantic.pushTypeStack("float64");
-            Semantic.pop2TypesAndPushCombination("-");
+            Semantic.pop2TypesAndPushCombinationTest("-");
             assertEquals("float64", semantic.popTypeStack());
 
             semantic.pushTypeStack("int64");
             semantic.pushTypeStack("float64");
-            Semantic.pop2TypesAndPushCombination("*");
+            Semantic.pop2TypesAndPushCombinationTest("*");
             assertEquals("float64", semantic.popTypeStack());
 
             semantic.pushTypeStack("int64");
             semantic.pushTypeStack("float64");
-            Semantic.pop2TypesAndPushCombination("/");
+            Semantic.pop2TypesAndPushCombinationTest("/");
             assertEquals("float64", semantic.popTypeStack());
 
             semantic.pushTypeStack("int64");
             semantic.pushTypeStack("string");
             try {
-                Semantic.pop2TypesAndPushCombination("+");
+                Semantic.pop2TypesAndPushCombinationTest("+");
                 fail("Expected SemanticError due to incompatible types");
             } catch (SemanticError e) {
                 assertTrue(e.getMessage().contains("Types not compatible"));
@@ -799,7 +799,7 @@ class SemanticTest {
             
     @Test
     public void testGetAndOrCombination() throws SemanticError {
-        Semantic.getAndOrCombination("bool", "bool");
+        Semantic.getAndOrCombinationTest("bool", "bool");
         assertEquals("bool", semantic.popTypeStack());
 
         semantic.pushTypeStack("int64");

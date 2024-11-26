@@ -115,7 +115,7 @@ public class Semantic implements Constants
         idList.clear();
     }
 
-    public static String getVariableTypeByName(String id) throws SemanticError {
+    private static String getVariableTypeByName(String id) throws SemanticError {
         var variableInitialLetter = getVarInitialLetter(id);
         switch(variableInitialLetter) {
             case "i":
@@ -131,7 +131,7 @@ public class Semantic implements Constants
         }
     }
 
-    public static String getVarInitialLetter(String id) {
+    private static String getVarInitialLetter(String id) {
         var idParts = id.split("_");
         return idParts[0];
     }
@@ -320,13 +320,13 @@ public class Semantic implements Constants
         objectCode.append(divCode);
     }
 
-    public static void pop2TypesAndPushCombination(String operator) throws SemanticError {
+    private static void pop2TypesAndPushCombination(String operator) throws SemanticError {
         var firstValueType = typeStack.pop();
         var secondValueType = typeStack.pop();
         pushVarsCombinationType(firstValueType, secondValueType, operator);
     }
 
-    public static void pushVarsCombinationType(String firstValueType, String secondValueType, String operator) throws SemanticError {
+    private static void pushVarsCombinationType(String firstValueType, String secondValueType, String operator) throws SemanticError {
         switch (operator) {
             case "+":
             case "-":
@@ -342,29 +342,29 @@ public class Semantic implements Constants
         }
     }
 
-    public static void getAndOrCombination(String firstValueType, String secondValueType) throws SemanticError {
+    private static void getAndOrCombination(String firstValueType, String secondValueType) throws SemanticError {
         if(!firstValueType.equals("bool") || !secondValueType.equals("bool"))
             throw new SemanticError("Types not compatible");
         pushBooleanTypeToStack();
     }
 
-    public static void getRelationalCombination(String firstValueType, String secondValueType) throws SemanticError {
+    private static void getRelationalCombination(String firstValueType, String secondValueType) throws SemanticError {
         if(isTypesValidForRelationalOperation(firstValueType, secondValueType))
             throw new SemanticError("Types not compatible");
         pushBooleanTypeToStack();
     }
 
-    public static boolean isTypesValidForRelationalOperation(String firstValueType, String secondValueType) {
+    private static boolean isTypesValidForRelationalOperation(String firstValueType, String secondValueType) {
         return (firstValueType != secondValueType) || 
         (!firstValueType.equals("int64") && !firstValueType.equals("float64") && !firstValueType.equals("string")) || 
         (!secondValueType.equals("int64") && !secondValueType.equals("float64") && !secondValueType.equals("string"));
     }
 
-    public static void pushBooleanTypeToStack() {
+    private static void pushBooleanTypeToStack() {
         typeStack.push("bool");
     }
     
-    public static void getArimethicCombination(String firstValueType, String secondValueType) throws SemanticError {
+    private static void getArimethicCombination(String firstValueType, String secondValueType) throws SemanticError {
         if (firstValueType == secondValueType) {
             typeStack.push(firstValueType);
             return;
@@ -409,10 +409,6 @@ public class Semantic implements Constants
     }
 
     //testing methods
-    public void setLength(int length) {
-        objectCode.setLength(length);
-    }
-
     public String popTypeStack() {
         return typeStack.pop();
     }
@@ -463,5 +459,13 @@ public class Semantic implements Constants
 
     public boolean isLabelStackEmpty() {
         return labelStack.isEmpty();
+    }
+
+    public static void pop2TypesAndPushCombinationTest(String operator) throws SemanticError {
+        pop2TypesAndPushCombination(operator);
+    }
+
+    public static void getAndOrCombinationTest(String firstValueType, String secondValueType) throws SemanticError {
+        getAndOrCombination(firstValueType, secondValueType);
     }
 }
