@@ -70,6 +70,12 @@ public class Semantic implements Constants
     }
 
     //pra testes
+    public void clearState() {
+        symbolTable.clear();
+        idList.clear();
+        objectCode.setLength(0);
+    }
+
     public void setLength(int length) {
         objectCode.setLength(length);
     }
@@ -86,12 +92,28 @@ public class Semantic implements Constants
         symbolTable.add(symbol);
     }
 
+    public boolean symbolsTableContains(String id) {
+        return symbolTable.contains(id);
+    }
+
     public String getRelationalOperator() {
         return relationalOperator;
     }
 
     public void setRelationalOperator(String operator) {
         relationalOperator = operator;
+    }
+
+    public boolean idListContains(String id) {
+        return idList.contains(id);
+    }
+
+    public void addIdToList(String id) {
+        idList.add(id);
+    }
+
+    public boolean isIdListEmpty() {
+        return idList.isEmpty();
     }
     //fim de metodos auxiliares para testes
     public static void method100() {
@@ -154,6 +176,9 @@ public class Semantic implements Constants
         if (type == "int64") objectCode.append("conv.i8\n");
         for (int i = 0; i < idList.size() - 1; i++) {
             objectCode.append("dup\n");
+        }
+
+        for (int i = 0; i < idList.size(); i++) {
             var id = idList.get(i);
             if (!symbolTable.contains(id)) throw new SemanticError(currentToken.getLexeme() + " não declarado");
 

@@ -13,7 +13,7 @@ class SemanticTest {
     @BeforeEach
     void setUp() {
         semantic = new Semantic();
-        semantic.setLength(0);
+        semantic.clearState();
     }
 
     @Test
@@ -55,46 +55,181 @@ class SemanticTest {
     }
 
     @Test
-    void testAction128() {
-        try {
-            semantic.executeAction(128, new Token(4, "1", 38));
-        } catch (SemanticError e) { e.printStackTrace(); }
+    void testMethod102_validIdentifiers() {
+        semantic.addSymbolsTable("i_var");
+
+        semantic.addIdToList("i_area");
+        semantic.addIdToList("f_perimeter");
+        semantic.addIdToList("s_teste");
+        semantic.addIdToList("b_oolean");
+
+        var token = new Token(3, "i_area", 1);
+
+        assertDoesNotThrow(() -> semantic.executeAction(102, token));
+
+        assertTrue(semantic.symbolsTableContains("i_area"));
+        assertTrue(semantic.symbolsTableContains("f_perimeter"));
+        assertTrue(semantic.symbolsTableContains("s_teste"));
+        assertTrue(semantic.symbolsTableContains("b_oolean"));
 
         var expected = """
-            ldc.i8 1
-            conv.r8
+            .locals (int64 i_area)
+            .locals (float64 f_perimeter)
+            .locals (string s_teste)
+            .locals (bool b_oolean)
             """;
 
         assertEquals(expected, semantic.getObjectCode());
-        assertEquals("int64", semantic.popTypeStack());
+        assertTrue(semantic.isIdListEmpty());
     }
 
     @Test
-    void testAction129() {
-        try {
-            semantic.executeAction(129, new Token(5, "1.0", 38));
-        } catch (SemanticError e) { e.printStackTrace(); }
+    void testMethod102_duplicateIdentifier() {
+        semantic.addSymbolsTable("i_existingvar");
+        semantic.addIdToList("i_existingvar");
 
-        var expected = """
-            ldc.r8 1.0
+        var token = new Token(3, "i_existingvar", 1);
+
+        var exception = assertThrows(SemanticError.class, () -> semantic.executeAction(102, token));
+        assertEquals("i_existingvar já declarado", exception.getMessage());
+    }
+    
+    @Test
+    void testMethod103_validAssignment() {
+        semantic.addSymbolsTable("i_var");
+        semantic.addSymbolsTable("f_area");
+        semantic.addSymbolsTable("b_active");
+
+        semantic.addIdToList("i_var");
+        semantic.addIdToList("f_area");
+        semantic.addIdToList("b_active");
+
+        semantic.pushTypeStack("int64");
+
+        var token = new Token(3, "i_var", 1);
+
+        assertDoesNotThrow(() -> semantic.executeAction(103, token));
+        var expectedObjectCode = """
+            conv.i8
+            dup
+            dup
+            stloc i_var
+            stloc f_area
+            stloc b_active
             """;
+        assertEquals(expectedObjectCode, semantic.getObjectCode());
 
-        assertEquals(expected, semantic.getObjectCode());
-        assertEquals("float64", semantic.popTypeStack());
+        assertTrue(semantic.isIdListEmpty());
     }
 
     @Test
-    void testAction130() {
-        try {
-            semantic.executeAction(130, new Token(6, "\"teste string\"", 38));
-        } catch (SemanticError e) { e.printStackTrace(); }
+    void testMethod103_identifierNotDeclared() {
+        semantic.addSymbolsTable("i_var");
+        semantic.addSymbolsTable("f_area");
+
+        semantic.addIdToList("i_var");
+        semantic.addIdToList("f_area");
+        semantic.addIdToList("b_active");
+
+        semantic.pushTypeStack("int64");
+
+        var token = new Token(3, "b_active", 1);
+        var exception = assertThrows(SemanticError.class, () -> semantic.executeAction(103, token));
+
+        assertEquals("b_active não declarado", exception.getMessage());
+
+        assertFalse(semantic.isIdListEmpty());
+    }
+
+    @Test
+    void testAction104() throws SemanticError {
+        var token = new Token(3, "s_teste", 38);
+        semantic.executeAction(104, token);
+        
+        assertTrue(semantic.idListContains("s_teste"));
+    }
+
+    @Test
+    void testAction107() {
+        Semantic.method107();
 
         var expected = """
-            ldstr "teste string"
+            ldstr "\\n"
+            call void [mscorlib]System.Console::Write(string)
             """;
-
+        
         assertEquals(expected, semantic.getObjectCode());
-        assertEquals("string", semantic.popTypeStack());
+    }
+
+    @Test
+    void testAction108Int64() throws SemanticError {
+        semantic.pushTypeStack("int64");
+        var token = new Token(4, "1", 38);
+        semantic.executeAction(108, token);
+
+        var expected = """
+            conv.i8
+            call void [mscorlib]System.Console::Write(int64)
+            """;
+        
+        assertEquals(expected, semantic.getObjectCode());
+    }
+
+    @Test
+    void testAction108Boolean() throws SemanticError {
+        semantic.pushTypeStack("bool");
+        var token = new Token(9, "true", 38);
+        semantic.executeAction(108, token);
+
+        var expected = """
+            call void [mscorlib]System.Console::Write(boolean)
+            """;
+        
+        assertEquals(expected, semantic.getObjectCode());
+    }
+
+    @Test
+    void testAction108Float64() throws SemanticError {
+        semantic.pushTypeStack("float64");
+        var token = new Token(5, "2.0", 38);
+        semantic.executeAction(108, token);
+
+        var expected = """
+            call void [mscorlib]System.Console::Write(float64)
+            """;
+        
+        assertEquals(expected, semantic.getObjectCode());
+    }
+
+    @Test
+    void testAction108String() throws SemanticError {
+        semantic.pushTypeStack("string");
+        var token = new Token(6, "teste", 38);
+        semantic.executeAction(108, token);
+
+        var expected = """
+            call void [mscorlib]System.Console::Write(string)
+            """;
+        
+        assertEquals(expected, semantic.getObjectCode());
+    }
+    
+    @Test
+    public void testMethod116() throws SemanticError {
+        semantic.pushTypeStack("bool");
+        semantic.pushTypeStack("bool");
+        Semantic.method116();
+
+        assertEquals("and\n", semantic.getObjectCode());
+    }
+
+    @Test
+    public void testMethod117() throws SemanticError {
+        semantic.pushTypeStack("bool");
+        semantic.pushTypeStack("bool");
+        Semantic.method117();
+
+        assertEquals("or\n", semantic.getObjectCode());
     }
 
     @Test
@@ -126,116 +261,17 @@ class SemanticTest {
     }
 
     @Test
-    void testAction131() {
+    void testAction120() {
         try {
-            semantic.executeAction(131, new Token(4, "7", 38));
-        } catch (SemanticError e) { e.printStackTrace(); }
-
-        var expected = """
-            ldc.r8 -1.0
-            mul
-            """;
-
-        assertEquals(expected, semantic.getObjectCode());
-    }
-    
-    @Test
-    void testAction123() {
-        try {
-            semantic.pushTypeStack("int64");
-            semantic.pushTypeStack("int64");
-            Semantic.method123();
+            semantic.executeAction(120, new Token(10, "false", 38));
         } catch (SemanticError e) { e.printStackTrace(); }
     
         var expected = """
-            add
+            ldc.i4 1
+            xor
             """;
         
         assertEquals(expected, semantic.getObjectCode());
-        assertEquals("int64", semantic.popTypeStack());
-    }
-    
-    @Test
-    void testAction124() {
-        try {
-            semantic.pushTypeStack("int64");
-            semantic.pushTypeStack("int64");
-            Semantic.method124();
-        } catch (SemanticError e) { e.printStackTrace(); }
-    
-        var expected = """
-            sub
-            """;
-        
-        assertEquals(expected, semantic.getObjectCode());
-        assertEquals("int64", semantic.popTypeStack());
-    }
-    
-    @Test
-    void testAction125() {
-        try {
-            semantic.pushTypeStack("int64");
-            semantic.pushTypeStack("int64");
-            Semantic.method125();
-        } catch (SemanticError e) { e.printStackTrace(); }
-    
-        var expected = """
-            mul
-            """;
-        
-        assertEquals(expected, semantic.getObjectCode());
-        assertEquals("int64", semantic.popTypeStack());
-    }
-    
-    @Test
-    void testAction126() {
-        try {
-            semantic.pushTypeStack("int64");
-            semantic.pushTypeStack("int64");
-            Semantic.method126();
-        } catch (SemanticError e) { e.printStackTrace(); }
-    
-        var expected = """
-            div
-            """;
-        
-        assertEquals(expected, semantic.getObjectCode());
-        assertEquals("int64", semantic.popTypeStack());
-    }
-
-    @Test
-    void testArimethicCombination() {
-        try {
-            semantic.pushTypeStack("int64");
-            semantic.pushTypeStack("int64");
-            Semantic.pop2TypesAndPushCombination("+");
-            assertEquals("int64", semantic.popTypeStack());
-
-            semantic.pushTypeStack("float64");
-            semantic.pushTypeStack("float64");
-            Semantic.pop2TypesAndPushCombination("-");
-            assertEquals("float64", semantic.popTypeStack());
-
-            semantic.pushTypeStack("int64");
-            semantic.pushTypeStack("float64");
-            Semantic.pop2TypesAndPushCombination("*");
-            assertEquals("float64", semantic.popTypeStack());
-
-            semantic.pushTypeStack("int64");
-            semantic.pushTypeStack("float64");
-            Semantic.pop2TypesAndPushCombination("/");
-            assertEquals("float64", semantic.popTypeStack());
-
-            semantic.pushTypeStack("int64");
-            semantic.pushTypeStack("string");
-            try {
-                Semantic.pop2TypesAndPushCombination("+");
-                fail("Expected SemanticError due to incompatible types");
-            } catch (SemanticError e) {
-                assertTrue(e.getMessage().contains("Types not compatible"));
-            }
-            
-        } catch (SemanticError e) { e.printStackTrace(); }
     }
     
     @Test
@@ -341,6 +377,211 @@ class SemanticTest {
             assertTrue(e.getMessage().contains("Unrecognized operator"));
         }
     }
+    
+    @Test
+    void testAction123() {
+        try {
+            semantic.pushTypeStack("int64");
+            semantic.pushTypeStack("int64");
+            Semantic.method123();
+        } catch (SemanticError e) { e.printStackTrace(); }
+    
+        var expected = """
+            add
+            """;
+        
+        assertEquals(expected, semantic.getObjectCode());
+        assertEquals("int64", semantic.popTypeStack());
+    }
+    
+    @Test
+    void testAction124() {
+        try {
+            semantic.pushTypeStack("int64");
+            semantic.pushTypeStack("int64");
+            Semantic.method124();
+        } catch (SemanticError e) { e.printStackTrace(); }
+    
+        var expected = """
+            sub
+            """;
+        
+        assertEquals(expected, semantic.getObjectCode());
+        assertEquals("int64", semantic.popTypeStack());
+    }
+    
+    @Test
+    void testAction125() {
+        try {
+            semantic.pushTypeStack("int64");
+            semantic.pushTypeStack("int64");
+            Semantic.method125();
+        } catch (SemanticError e) { e.printStackTrace(); }
+    
+        var expected = """
+            mul
+            """;
+        
+        assertEquals(expected, semantic.getObjectCode());
+        assertEquals("int64", semantic.popTypeStack());
+    }
+    
+    @Test
+    void testAction126() {
+        try {
+            semantic.pushTypeStack("int64");
+            semantic.pushTypeStack("int64");
+            Semantic.method126();
+        } catch (SemanticError e) { e.printStackTrace(); }
+    
+        var expected = """
+            div
+            """;
+        
+        assertEquals(expected, semantic.getObjectCode());
+        assertEquals("int64", semantic.popTypeStack());
+    }
+
+    @Test
+    void testAction127IdNotDeclared() {
+        Token token = new Token(5, "f_var3", 38);
+
+        Exception exception = assertThrows(SemanticError.class, () -> {
+            semantic.executeAction(127, token);
+        });
+
+        assertEquals("f_var3 não declarado", exception.getMessage());
+    }
+
+    @Test
+    void testAction127PushCorrectTypeToStack() throws SemanticError {
+        semantic.addSymbolsTable("i_var1");
+        Token token = new Token(4, "i_var1", 38);
+        semantic.executeAction(127, token);
+
+        assertEquals("int64", semantic.popTypeStack());
+    }
+
+    @Test
+    void testAction127GenerateInt64Code() throws SemanticError {
+        semantic.addSymbolsTable("i_var1");
+        Token token = new Token(4, "i_var1", 38);
+        semantic.executeAction(127, token);
+
+        var expected = """
+            ldloc i_var1
+            conv.r8
+            """;
+        
+        assertEquals(expected, semantic.getObjectCode());
+    }
+
+    @Test
+    void testAction127GenerateFloat64Code() throws SemanticError {
+        semantic.addSymbolsTable("f_var2");
+        var token = new Token(5, "f_var2", 38);
+        semantic.executeAction(127, token);
+
+
+        var expected = """
+            ldloc f_var2
+            """;
+        
+        assertEquals(expected, semantic.getObjectCode());
+        assertFalse(semantic.getObjectCode().contains("conv.r8"));
+    }
+
+    @Test
+    void testAction128() {
+        try {
+            semantic.executeAction(128, new Token(4, "1", 38));
+        } catch (SemanticError e) { e.printStackTrace(); }
+
+        var expected = """
+            ldc.i8 1
+            conv.r8
+            """;
+
+        assertEquals(expected, semantic.getObjectCode());
+        assertEquals("int64", semantic.popTypeStack());
+    }
+
+    @Test
+    void testAction129() {
+        try {
+            semantic.executeAction(129, new Token(5, "1.0", 38));
+        } catch (SemanticError e) { e.printStackTrace(); }
+
+        var expected = """
+            ldc.r8 1.0
+            """;
+
+        assertEquals(expected, semantic.getObjectCode());
+        assertEquals("float64", semantic.popTypeStack());
+    }
+
+    @Test
+    void testAction130() {
+        try {
+            semantic.executeAction(130, new Token(6, "\"teste string\"", 38));
+        } catch (SemanticError e) { e.printStackTrace(); }
+
+        var expected = """
+            ldstr "teste string"
+            """;
+
+        assertEquals(expected, semantic.getObjectCode());
+        assertEquals("string", semantic.popTypeStack());
+    }
+
+    @Test
+    void testAction131() {
+        try {
+            semantic.executeAction(131, new Token(4, "7", 38));
+        } catch (SemanticError e) { e.printStackTrace(); }
+
+        var expected = """
+            ldc.r8 -1.0
+            mul
+            """;
+
+        assertEquals(expected, semantic.getObjectCode());
+    }
+
+    @Test
+    void testArimethicCombination() {
+        try {
+            semantic.pushTypeStack("int64");
+            semantic.pushTypeStack("int64");
+            Semantic.pop2TypesAndPushCombination("+");
+            assertEquals("int64", semantic.popTypeStack());
+
+            semantic.pushTypeStack("float64");
+            semantic.pushTypeStack("float64");
+            Semantic.pop2TypesAndPushCombination("-");
+            assertEquals("float64", semantic.popTypeStack());
+
+            semantic.pushTypeStack("int64");
+            semantic.pushTypeStack("float64");
+            Semantic.pop2TypesAndPushCombination("*");
+            assertEquals("float64", semantic.popTypeStack());
+
+            semantic.pushTypeStack("int64");
+            semantic.pushTypeStack("float64");
+            Semantic.pop2TypesAndPushCombination("/");
+            assertEquals("float64", semantic.popTypeStack());
+
+            semantic.pushTypeStack("int64");
+            semantic.pushTypeStack("string");
+            try {
+                Semantic.pop2TypesAndPushCombination("+");
+                fail("Expected SemanticError due to incompatible types");
+            } catch (SemanticError e) {
+                assertTrue(e.getMessage().contains("Types not compatible"));
+            }
+            
+        } catch (SemanticError e) { e.printStackTrace(); }
+    }
 
     @Test
     void testRelationalCombination() {
@@ -410,38 +651,6 @@ class SemanticTest {
             assertTrue(e.getMessage().contains("Types not compatible"));
         }
     }
-
-    @Test
-    void testAction120() {
-        try {
-            semantic.executeAction(120, new Token(10, "false", 38));
-        } catch (SemanticError e) { e.printStackTrace(); }
-    
-        var expected = """
-            ldc.i4 1
-            xor
-            """;
-        
-        assertEquals(expected, semantic.getObjectCode());
-    }
-    
-    @Test
-    public void testMethod116() throws SemanticError {
-        semantic.pushTypeStack("bool");
-        semantic.pushTypeStack("bool");
-        Semantic.method116();
-
-        assertEquals("and\n", semantic.getObjectCode());
-    }
-
-    @Test
-    public void testMethod117() throws SemanticError {
-        semantic.pushTypeStack("bool");
-        semantic.pushTypeStack("bool");
-        Semantic.method117();
-
-        assertEquals("or\n", semantic.getObjectCode());
-    }
             
     @Test
     public void testGetAndOrCombination() throws SemanticError {
@@ -457,55 +666,6 @@ class SemanticTest {
         } catch (SemanticError e) {
             assertTrue(e.getMessage().contains("Types not compatible"));
         }
-    }
-
-    @Test
-    void testAction127IdNotDeclared() {
-        Token token = new Token(5, "f_var3", 38);
-
-        Exception exception = assertThrows(SemanticError.class, () -> {
-            semantic.executeAction(127, token);
-        });
-
-        assertEquals("f_var3 não declarado", exception.getMessage());
-    }
-
-    @Test
-    void testAction127PushCorrectTypeToStack() throws SemanticError {
-        semantic.addSymbolsTable("i_var1");
-        Token token = new Token(4, "i_var1", 38);
-        semantic.executeAction(127, token);
-
-        assertEquals("int64", semantic.popTypeStack());
-    }
-
-    @Test
-    void testAction127GenerateInt64Code() throws SemanticError {
-        semantic.addSymbolsTable("i_var1");
-        Token token = new Token(4, "i_var1", 38);
-        semantic.executeAction(127, token);
-
-        var expected = """
-            ldloc i_var1
-            conv.r8
-            """;
-        
-        assertEquals(expected, semantic.getObjectCode());
-    }
-
-    @Test
-    void testAction127GenerateFloat64Code() throws SemanticError {
-        semantic.addSymbolsTable("f_var2");
-        Token token = new Token(5, "f_var2", 38);
-        semantic.executeAction(127, token);
-
-
-        var expected = """
-            ldloc f_var2
-            """;
-        
-        assertEquals(expected, semantic.getObjectCode());
-        assertFalse(semantic.getObjectCode().contains("conv.r8"));
     }
 }
 
