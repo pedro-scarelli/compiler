@@ -18,7 +18,7 @@ public class Semantic implements Constants
     private static Stack<String> typeStack = new Stack<>();
     private static Stack<String> labelStack = new Stack<>();
     private static List<String> idList = new ArrayList<>();
-    private static Set<String> symbolTable = new HashSet<>();
+    private static Set<String> symbolsTable = new HashSet<>();
 
     private static int labelCounter = 0;
 
@@ -66,16 +66,19 @@ public class Semantic implements Constants
         methodAction.run();
     }
 
-    public String getObjectCode() {
+    public String getObjectCode(){
         return objectCode.toString();
     }
     
     public void clearState() {
-        labelCounter = 0;
-        symbolTable.clear();
+        symbolsTable.clear();
         idList.clear();
         labelStack.clear();
+        typeStack.clear();
         objectCode.setLength(0);
+        relationalOperator = "";
+        currentToken = null;
+        labelCounter = 0;
     }
 
     private static void method100() {
@@ -103,9 +106,9 @@ public class Semantic implements Constants
     private static void method102() throws SemanticError {
         for (int i = 0; i < idList.size(); i++) {
             var id = idList.get(i);
-            if (symbolTable.contains(id)) throw new SemanticError(currentToken.getLexeme() + " já declarado");
+            if (symbolsTable.contains(id)) throw new SemanticError(currentToken.getLexeme() + " já declarado");
 
-            symbolTable.add(id);
+            symbolsTable.add(id);
             var varType = getVariableTypeByName(id);
             objectCode.append(String.format(".locals (%s %s)\n", varType, id));
         }
@@ -142,7 +145,7 @@ public class Semantic implements Constants
 
         for (int i = 0; i < idList.size(); i++) {
             var id = idList.get(i);
-            if (!symbolTable.contains(id)) throw new SemanticError(currentToken.getLexeme() + " não declarado");
+            if (!symbolsTable.contains(id)) throw new SemanticError(currentToken.getLexeme() + " não declarado");
 
             objectCode.append(String.format("stloc %s\n", id));
         }
@@ -155,7 +158,7 @@ public class Semantic implements Constants
     
     private static void method105() throws SemanticError {
         var id = currentToken.getLexeme();
-        if (!symbolTable.contains(id)) throw new SemanticError(currentToken.getLexeme() + " não declarado");
+        if (!symbolsTable.contains(id)) throw new SemanticError(currentToken.getLexeme() + " não declarado");
     
         objectCode.append("call string [mscorlib] System.Console::ReadLine()\n");
 
@@ -376,7 +379,7 @@ public class Semantic implements Constants
 
     private static void method127() throws SemanticError {
         var lexeme = currentToken.getLexeme();
-        if (!symbolTable.contains(lexeme)) throw new SemanticError(currentToken.getLexeme() + " não declarado");
+        if (!symbolsTable.contains(lexeme)) throw new SemanticError(currentToken.getLexeme() + " não declarado");
 
         var varType = getVariableTypeByName(lexeme);
         typeStack.push(varType);
@@ -419,11 +422,11 @@ public class Semantic implements Constants
     }
 
     public void addSymbolsTable(String symbol) {
-        symbolTable.add(symbol);
+        symbolsTable.add(symbol);
     }
 
     public boolean symbolsTableContains(String id) {
-        return symbolTable.contains(id);
+        return symbolsTable.contains(id);
     }
 
     public String getRelationalOperator() {
