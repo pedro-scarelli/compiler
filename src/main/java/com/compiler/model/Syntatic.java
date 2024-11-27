@@ -2,13 +2,13 @@ package com.compiler.model;
 
 import java.util.Stack;
 
-public class Sintatico implements Constants
+public class Syntatic implements Constants
 {
-    private Stack stack = new Stack();
+    private Stack<Integer> stack = new Stack<>();
     private Token currentToken;
     private Token previousToken;
-    private Lexico scanner;
-    private Semantico semanticAnalyser;
+    private Lexical scanner;
+    private Semantic semanticAnalyser;
 
     private static final boolean isTerminal(int x)
     {
@@ -20,10 +20,10 @@ public class Sintatico implements Constants
         return x >= FIRST_NON_TERMINAL && x < FIRST_SEMANTIC_ACTION;
     }
 
-    private static final boolean isSemanticAction(int x)
-    {
-        return x >= FIRST_SEMANTIC_ACTION;
-    }
+    // private static final boolean isSemanticAction(int x)
+    // {
+    //     return x >= FIRST_SEMANTIC_ACTION;
+    // }
 
     private boolean step() throws LexicalError, SyntaticError, SemanticError
     {
@@ -66,7 +66,6 @@ public class Sintatico implements Constants
             if (pushProduction(x, a))
                 return false;
             else
-                System.out.println(currentToken.getLexeme());
                 throw new SyntaticError(PARSER_ERROR[x], currentToken.getPosition(), currentToken.getLexeme());
         }
         else // isSemanticAction(x)
@@ -85,7 +84,7 @@ public class Sintatico implements Constants
             //empilha a produção em ordem reversa
             for (int i=production.length-1; i>=0; i--)
             {
-                stack.push(new Integer(production[i]));
+                stack.push(Integer.valueOf(production[i]));
             }
             return true;
         }
@@ -93,14 +92,14 @@ public class Sintatico implements Constants
             return false;
     }
 
-    public void parse(Lexico scanner, Semantico semanticAnalyser) throws LexicalError, SyntaticError, SemanticError
+    public void parse(Lexical scanner, Semantic semanticAnalyser) throws LexicalError, SyntaticError, SemanticError
     {
         this.scanner = scanner;
         this.semanticAnalyser = semanticAnalyser;
 
         stack.clear();
-        stack.push(new Integer(DOLLAR));
-        stack.push(new Integer(START_SYMBOL));
+        stack.push(Integer.valueOf(DOLLAR));
+        stack.push(Integer.valueOf(START_SYMBOL));
 
         currentToken = scanner.nextToken();
 

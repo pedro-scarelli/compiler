@@ -1,34 +1,17 @@
 package com.compiler.view;
 
-import com.compiler.model.LexicalError;
-import com.compiler.model.Lexico;
-import com.compiler.model.SemanticError;
-import com.compiler.model.Semantico;
-import com.compiler.model.Sintatico;
-import com.compiler.model.SyntaticError;
+import com.compiler.model.*;
+import com.compiler.model.Compiler;
+
+import javax.swing.*;
+import java.io.*;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.ActionMap;
-import javax.swing.Box;
-import javax.swing.InputMap;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.KeyStroke;
 
 public class MainFrame extends javax.swing.JFrame {
     
+    private FileManager fileManager = new FileManager(this);
     private File currentFile;
     
     public MainFrame() {
@@ -68,7 +51,6 @@ public class MainFrame extends javax.swing.JFrame {
         toolBar.add(showTeamBtn);
     }
     
-    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -274,75 +256,53 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void newFileBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newFileBtnActionPerformed
         textArea.setText("");
-        terminalTextArea.setText("");
+        clearTerminal();
         fileStatusLabel.setText("");
         currentFile = null;
     }//GEN-LAST:event_newFileBtnActionPerformed
 
     private void openFileBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openFileBtnActionPerformed
-        JFileChooser fileChooser = new JFileChooser();
-        
+        var fileChooser = new JFileChooser();
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        
-        int returnedValue = fileChooser.showOpenDialog(this);
+        var returnedValue = fileChooser.showOpenDialog(this);
         
         if (returnedValue == JFileChooser.APPROVE_OPTION) {
-            File selectedFile = fileChooser.getSelectedFile();
-            setTextFromFile(selectedFile);
-        } else {
-            System.out.println("Nenhum arquivo selecionado.");
-        }
+            var selectedFile = fileChooser.getSelectedFile();
+            isTxtFileAndsetTextFromFile(selectedFile);
+            return;
+        } 
+
+        System.out.println("Nenhum arquivo selecionado.");
     }//GEN-LAST:event_openFileBtnActionPerformed
 
     private void compileCodeBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_compileCodeBtnActionPerformed
-        Lexico lexico = new Lexico();
-	Sintatico sintatico = new Sintatico();
-	Semantico semantico = new Semantico();
-
-        lexico.setInput(textArea.getText());
-        try {
-            sintatico.parse(lexico, semantico);
-            terminalTextArea.setText("programa compilado com sucesso");
-	} catch ( LexicalError e ) {
-            var line = getLineFromPosition(e.getPosition());
-            terminalTextArea.setText("Erro na linha " + line + " - " + e.getMessage());
-	} catch ( SyntaticError e ) {
-            var line = getLineFromPosition(e.getPosition());
-            var lexeme = e.getLexeme();
-            lexeme = getErrorCause(e.getPosition(), lexeme);
-            terminalTextArea.setText("Erro na linha " + line + " - " + "encontrado " + lexeme + " " + e.getMessage());		
-	} catch ( SemanticError e ) {
-            terminalTextArea.setText("Erro semantico");
-            //Trata erros sem�nticos
-	}
+        if (currentFile == null) {
+            JOptionPane.showMessageDialog(
+            this,
+            "Você deve salvar o arquivo antes de compilá-lo.",
+            "Aviso",
+            JOptionPane.WARNING_MESSAGE
+            );
+            return;
+        }
+        
+        var compiler = new Compiler(textArea.getText(), currentFile, fileManager);
+        terminalTextArea.setText(compiler.getResultFeedback());
     }//GEN-LAST:event_compileCodeBtnActionPerformed
 
     private void saveFileBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveFileBtnActionPerformed
-        if (currentFile == null) {
-            JFileChooser fileChooser = new JFileChooser();
-            fileChooser.setDialogTitle("Salvar Como");
-            int returnValue = fileChooser.showSaveDialog(this);
-
-            if (returnValue == JFileChooser.APPROVE_OPTION) {
-                currentFile = fileChooser.getSelectedFile();
-
-                if (currentFile.exists()) {
-                    int confirm = JOptionPane.showConfirmDialog(this,
-                            "O arquivo j� existe. Deseja substituir?", "Substituir Arquivo",
-                            JOptionPane.YES_NO_OPTION);
-                    if (confirm == JOptionPane.NO_OPTION) {
-                        return;
-                    }
-                }
-                
-                fileStatusLabel.setText(currentFile.getAbsolutePath());
-                saveFileContent();
-            }
-        } else {
+        if (currentFile != null) {
             saveFileContent();
+            return;
         }
 
-        terminalTextArea.setText("");
+        var fileChooser = new JFileChooser();
+        var returnValue = askSaveHow(fileChooser);
+
+        if (returnValue == JFileChooser.APPROVE_OPTION) {
+            getFileAndUpdateFileStatus(fileChooser);
+        }
+        clearTerminal();
     }//GEN-LAST:event_saveFileBtnActionPerformed
 
     private void showTeamBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showTeamBtnActionPerformed
@@ -393,10 +353,34 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JToolBar toolBar;
     // End of variables declaration//GEN-END:variables
 
+    private void getFileAndUpdateFileStatus(JFileChooser fileChooser) {
+        currentFile = fileChooser.getSelectedFile();
+
+        if (!currentFile.exists()) {
+            saveFileAndUpdateStatus();
+            return;
+        } 
+
+        replaceFileOrCancelSave();
+    }
+
+    private void replaceFileOrCancelSave() {
+        var confirm = JOptionPane.showConfirmDialog(this,
+        "O arquivo ja existe. Deseja substituir?", "Substituir Arquivo",
+        JOptionPane.YES_NO_OPTION);
+        
+        if (confirm != JOptionPane.NO_OPTION) saveFileAndUpdateStatus();        
+    }
+
+    private void saveFileAndUpdateStatus() {
+        fileStatusLabel.setText(currentFile.getAbsolutePath());
+        saveFileContent();
+    }
+
     private void saveFileContent() {
         if (currentFile != null) {
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(currentFile))) {
-                writer.write(textArea.getText());
+            try {
+                fileManager.writeFile(currentFile, textArea.getText());
                 JOptionPane.showMessageDialog(this, "Arquivo salvo com sucesso.",
                                               "Salvar Arquivo", JOptionPane.INFORMATION_MESSAGE);
             } catch (IOException e) {
@@ -404,6 +388,11 @@ public class MainFrame extends javax.swing.JFrame {
                                               "Erro", JOptionPane.ERROR_MESSAGE);
             }
         }
+    }
+
+    public int askSaveHow(JFileChooser fileChooser) {
+        fileChooser.setDialogTitle("Salvar Como");
+        return fileChooser.showSaveDialog(this);
     }
     
     private void configureShortcuts() {
@@ -433,63 +422,28 @@ public class MainFrame extends javax.swing.JFrame {
         actionMap.put(actionName, action);
     }
     
-    private int getLineFromPosition(int position) {
-        var text = textArea.getText();
-        int line = 1;
-        for (int i = 0; i < position; i++) {
-            if (text.charAt(i) == '\n') {
-                line++;
-            }
-        }
-        return line;
+    private void isTxtFileAndsetTextFromFile(File selectedFile) {
+        if(fileManager.isTxtFile(selectedFile)) {
+            setTextFromFile(selectedFile);
+            return;
+        }   
+        
+        JOptionPane.showMessageDialog(this, "Por favor, selecione um arquivo de texto.",
+        "Arquivo Invalido", JOptionPane.WARNING_MESSAGE);
     }
-    
-    private String getErrorCause(int position, String lexeme) {
-        var trimmedText = textArea.getText().trim();
-        if (position == trimmedText.length()) {
-            return "EOF";
-        } 
-        
-        if(lexeme == null) {
-            lexeme = treatNullLexeme(position, trimmedText);
-        }
-        
-        if(verifyIfLexemeIsString(lexeme)){
-            return "constante_string";
-        }
-        
-        return lexeme;
-    }
-    
-    private boolean verifyIfLexemeIsString(String errorCause) {
-        if(errorCause.charAt(0) == '\"' || errorCause.charAt(0) == '\''){
-            return true;
-        }
-        
-        return false;
-    }
-    
-     private String treatNullLexeme(int position, String text) {    
-        var errorCause = String.valueOf(text.charAt(position));
-        for(int i = position + 1; i < text.length(); i++){
-            if (String.valueOf(text.charAt(i)).equals(" ") || String.valueOf(text.charAt(i)).equals("\n")){
-                break;
-            } else {
-                errorCause += text.charAt(i);
-            }
-        }
-        
-        return errorCause;
-    }
-    
+
     private void setTextFromFile(File selectedFile) {
-        if(verifyIfFileIsTxtFile(selectedFile)) {
-            textArea.setText(convertTxtFileToString(selectedFile));
+        try {
+            textArea.setText(fileManager.readFile(selectedFile));
             clearTerminal();
             changeCurrentFile(selectedFile);
-        } else {
+            return;
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Erro ao ler o arquivo: " + e.getMessage(),
+                                          "Erro", JOptionPane.ERROR_MESSAGE);
+        } catch (IllegalArgumentException ex) {     
             JOptionPane.showMessageDialog(this, "Por favor, selecione um arquivo de texto.",
-                                            "Arquivo Invalido", JOptionPane.WARNING_MESSAGE);
+                                        "Arquivo Invalido", JOptionPane.WARNING_MESSAGE);
         }
     }
     
@@ -499,25 +453,11 @@ public class MainFrame extends javax.swing.JFrame {
     
     private void changeCurrentFile(File selectedFile){
         currentFile = selectedFile;
-        String filePath = selectedFile.getAbsolutePath();
+        var filePath = selectedFile.getAbsolutePath();
         fileStatusLabel.setText(filePath);
     }
     
-    private String convertTxtFileToString(File selectedFile) {
-        StringBuilder content = new StringBuilder();
-        String line;
-        try (BufferedReader reader = new BufferedReader(new FileReader(selectedFile))) {
-            while ((line = reader.readLine()) != null) {
-                content.append(line).append("\n");
-            }
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "Erro ao ler o arquivo: " + e.getMessage(),
-                                             "Erro", JOptionPane.ERROR_MESSAGE);
-        }
-        return content.toString();
-    }
-        
-    private boolean verifyIfFileIsTxtFile(File selectedFile) {
-        return selectedFile.isFile() && selectedFile.getName().endsWith(".txt");
+    public void showError(String errorMessage) {
+        JOptionPane.showMessageDialog(this, errorMessage, "Erro", JOptionPane.ERROR_MESSAGE);
     }
 }

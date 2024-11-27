@@ -1,16 +1,16 @@
 package com.compiler.model;
 
-public class Lexico implements Constants
+public class Lexical implements Constants
 {
     private int position;
     private String input;
 
-    public Lexico()
+    public Lexical()
     {
         this("");
     }
 
-    public Lexico(String input)
+    public Lexical(String input)
     {
         setInput(input);
     }
@@ -68,7 +68,7 @@ public class Lexico implements Constants
             String lexeme = input.substring(start, end);
             token = lookupToken(token, lexeme);
             
-            if (token == 2) throw new LexicalError(lexeme + " palavra reservada inválida");
+            if (token == 2) throw new LexicalError(lexeme + " palavra reservada invalida");
             
             return new Token(token, lexeme, start);
         }
