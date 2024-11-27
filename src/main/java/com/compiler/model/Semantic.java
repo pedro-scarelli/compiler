@@ -86,9 +86,8 @@ public class Semantic implements Constants
             .assembly extern mscorlib {}
             .assembly _codigo_objeto{}
             .module _codigo_objeto.exe
-
-            .class public _UNICA{
-            .method static public void _principal(){
+            .class public UNICA{
+            .method static public void _principal() {
             .entrypoint
             """;
         objectCode.append(headers);
@@ -97,7 +96,7 @@ public class Semantic implements Constants
     private static void method101() {
         var endOfProgram = """
             ret
-                }
+            }
             }
             """;
         objectCode.append(endOfProgram);
@@ -110,7 +109,7 @@ public class Semantic implements Constants
 
             symbolsTable.add(id);
             var varType = getVariableTypeByName(id);
-            objectCode.append(String.format(".locals (%s %s)\n", varType, id));
+            objectCode.append(String.format(".locals(%s %s)\n", varType, id));
         }
         idList.clear();
     }
@@ -160,7 +159,7 @@ public class Semantic implements Constants
         var id = currentToken.getLexeme();
         if (!symbolsTable.contains(id)) throw new SemanticError(currentToken.getLexeme() + " não declarado", currentToken.getPosition());
     
-        objectCode.append("call string [mscorlib] System.Console::ReadLine()\n");
+        objectCode.append("call string [mscorlib]System.Console::ReadLine()\n");
 
         var varType = getVariableTypeByName(id);
         var varClass = "";
@@ -178,18 +177,25 @@ public class Semantic implements Constants
                 varClass = "Boolean";
                 break;
         }
-        objectCode.append(String.format("call %s [mscorlib] System.%s::Parse(string)\n", varType, varClass));
+        objectCode.append(String.format("call %s [mscorlib]System.%s::Parse(string)\n", varType, varClass));
         objectCode.append(String.format("stloc %s\n", currentToken.getLexeme()));
     }
     
     private static void method106() {
-        objectCode.append(String.format("ldstr \"%s\"\n", currentToken.getLexeme()));
+        objectCode.append(String.format("ldstr %s\n", currentToken.getLexeme()));
         objectCode.append("call void [mscorlib]System.Console::Write(string)\n");
     }
     
     private static void method107() {
-        
-        objectCode.append(String.format("ldstr %s\ncall void [mscorlib]System.Console::Write(string)\n", "\"\\n\""));
+        var lastIndex = objectCode.lastIndexOf("Write(");
+    
+        if (lastIndex != -1) {
+            objectCode.replace(
+                lastIndex, 
+                lastIndex + "Write(".length(), 
+                "WriteLine("
+            );
+        }         
     }
     
     private static void method108() {

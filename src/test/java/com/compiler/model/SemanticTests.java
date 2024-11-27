@@ -27,9 +27,8 @@ class SemanticTest {
             .assembly extern mscorlib {}
             .assembly _codigo_objeto{}
             .module _codigo_objeto.exe
-
-            .class public _UNICA{
-            .method static public void _principal(){
+            .class public UNICA{
+            .method static public void _principal() {
             .entrypoint
             """;
 
@@ -46,7 +45,7 @@ class SemanticTest {
 
         var expected = """
             ret
-                }
+            }
             }
             """;
 
@@ -72,10 +71,10 @@ class SemanticTest {
         assertTrue(semantic.symbolsTableContains("b_oolean"));
 
         var expected = """
-            .locals (int64 i_area)
-            .locals (float64 f_perimeter)
-            .locals (string s_teste)
-            .locals (bool b_oolean)
+            .locals(int64 i_area)
+            .locals(float64 f_perimeter)
+            .locals(string s_teste)
+            .locals(bool b_oolean)
             """;
 
         assertEquals(expected, semantic.getObjectCode());
@@ -160,7 +159,7 @@ class SemanticTest {
         semantic.addSymbolsTable("s_text");
         semantic.executeAction(105, new Token(3, "s_text", 0));
         var expected = """
-            call string [mscorlib] System.Console::ReadLine()
+            call string [mscorlib]System.Console::ReadLine()
             stloc s_text
             """;
 
@@ -172,8 +171,8 @@ class SemanticTest {
         semantic.addSymbolsTable("i_size");
         semantic.executeAction(105, new Token(3, "i_size", 0));
         var expected = """
-            call string [mscorlib] System.Console::ReadLine()
-            call int64 [mscorlib] System.Int64::Parse(string)
+            call string [mscorlib]System.Console::ReadLine()
+            call int64 [mscorlib]System.Int64::Parse(string)
             stloc i_size
             """;
 
@@ -185,8 +184,8 @@ class SemanticTest {
         semantic.addSymbolsTable("f_area");
         semantic.executeAction(105, new Token(3, "f_area", 0));
         var expected = """
-            call string [mscorlib] System.Console::ReadLine()
-            call float64 [mscorlib] System.Double::Parse(string)
+            call string [mscorlib]System.Console::ReadLine()
+            call float64 [mscorlib]System.Double::Parse(string)
             stloc f_area
             """;
 
@@ -198,8 +197,8 @@ class SemanticTest {
         semantic.addSymbolsTable("b_active");
         semantic.executeAction(105, new Token(3, "b_active", 0));
         var expected = """
-            call string [mscorlib] System.Console::ReadLine()
-            call bool [mscorlib] System.Boolean::Parse(string)
+            call string [mscorlib]System.Console::ReadLine()
+            call bool [mscorlib]System.Boolean::Parse(string)
             stloc b_active
             """;
 
@@ -208,7 +207,7 @@ class SemanticTest {
 
     @Test
     void testAction106() throws SemanticError {
-        semantic.executeAction(106, new Token(6, "test", 0));
+        semantic.executeAction(106, new Token(6, "\"test\"", 0));
         var expected = """
             ldstr "test"
             call void [mscorlib]System.Console::Write(string)
@@ -219,11 +218,12 @@ class SemanticTest {
 
     @Test
     void testAction107() throws SemanticError {
+        semantic.pushTypeStack("string");
+        semantic.executeAction(108, new Token(6,"test", 0));
         semantic.executeAction(107, new Token(6,"test", 0));
 
         var expected = """
-            ldstr "\\n"
-            call void [mscorlib]System.Console::Write(string)
+            call void [mscorlib]System.Console::WriteLine(string)
             """;
         
         assertEquals(expected, semantic.getObjectCode());
