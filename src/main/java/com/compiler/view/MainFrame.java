@@ -276,6 +276,16 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_openFileBtnActionPerformed
 
     private void compileCodeBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_compileCodeBtnActionPerformed
+        if (currentFile == null) {
+            JOptionPane.showMessageDialog(
+            this,
+            "Você deve salvar o arquivo antes de compilá-lo.",
+            "Aviso",
+            JOptionPane.WARNING_MESSAGE
+            );
+            return;
+        }
+        
         var compiler = new Compiler(textArea.getText(), currentFile, fileManager);
         terminalTextArea.setText(compiler.getResultFeedback());
     }//GEN-LAST:event_compileCodeBtnActionPerformed
