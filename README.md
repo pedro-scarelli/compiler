@@ -90,7 +90,7 @@ programa.exe
 ## 📝 Exemplo de Uso
 
 ### Arquivo de entrada (area.txt):
-
+```bash
 main
   i_lado, i_area;
 
@@ -104,9 +104,9 @@ main
   write (i_area);
 
 end
-
-Geração de .il:
-
+```
+### Geração de .il:
+```bash
 .assembly extern mscorlib {}
 .assembly _codigo_objeto{}
 .module _codigo_objeto.exe
@@ -115,14 +115,55 @@ Geração de .il:
   .method static public void _principal(){
      .entrypoint
      .locals (int64 i_lado)
-      .locals (int64 i_area)
-     
-     // repeat
+	 .locals (int64 i_area)
+	 
+	 // repeat
      L1:
-      call string [mscorlib]System.Console::ReadLine()
+	 call string [mscorlib]System.Console::ReadLine()
      call int64 [mscorlib]System.Int64::Parse(string)
      stloc i_lado
-     ...
+     
+	 // if i_lado < 0 || i_lado == 0
+	 ldloc i_lado
+     conv.r8
+     ldc.i8 0
+     conv.r8 
+     clt
+     ldloc i_lado
+     conv.r8
+     ldc.i8 0
+     conv.r8 
+     ceq
+     or
+     brfalse L3
+     
+	 ldstr "valor invalido"
+     call void [mscorlib]System.Console::WriteLine(string)
+     br L2  
+     L3:
+	 L2:
+	 
+	 // until i_lado > 0
+     ldloc i_lado
+     conv.r8
+     ldc.i8 0
+     conv.r8 
+     cgt
+     brfalse L1        
+
+     ldloc i_lado
+     conv.r8
+     ldloc i_lado
+     conv.r8
+     mul
+     conv.i8
+     stloc i_area
+     ldloc i_area
+     conv.r8
+     conv.i8
+     call void [mscorlib]System.Console::Write(int64)
+
      ret
   }
 }
+```
