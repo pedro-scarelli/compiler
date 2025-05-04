@@ -58,6 +58,8 @@ delimiter tokens (main, read, write, etc.) e operadores lógicos, relacionais e 
 Para a gramática completa, consulte o arquivo de configuração do GALS (grammar-rules.gals).
 Link para download do GALS: https://ava3.furb.br/mod/resource/view.php?id=1027899
 
+---
+
 ## 💡 Como Usar
 
 1. Crie um arquivo de código-fonte seguindo a gramática definida (por exemplo, programa.txt).
