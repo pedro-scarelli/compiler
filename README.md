@@ -2,6 +2,10 @@
 
 Este projeto implementa um compilador completo (léxico, sintático e semântico) que lê um arquivo de código-fonte (`.txt`), gera um código-objeto em MSIL (`.il`) e, em seguida, permite a conversão para um executável (`.exe`) no Windows.
 
+### Requisitos:
+
+Java
+
 ---
 
 ## 🚀 Funcionalidades
@@ -31,17 +35,17 @@ Parser = LL
 
 
 ### Tokens    
-pr: [a-z] [a-zA-Z]* // palavra reservada  
-id:! (i_|f_|b_|s_) ([a-z][A-Z]? | [A-Z]) (([a-z] | [0-9]) [A-Z]?) // identificador  
-cte: [1-9] [0-9]* | 0 // constante inteira  
-cte_2: ([1-9][0-9]* | 0) , 0-9* // constante float  
-ct: " ([^\n"%](%x))* " // constante string  
+pr: [a-z] [a-zA-Z]* (palavra reservada)  
+id:! (i_|f_|b_|s_) ([a-z][A-Z]? | [A-Z]) (([a-z] | [0-9]) [A-Z]?) (identificador)  
+cte: [1-9] [0-9]* | 0 (constante inteira)  
+cte_2: ([1-9][0-9]* | 0) , 0-9* (constante float)  
+ct: " ([^\n"%](%x))* " (constante string)  
 
 
-:! >@ \n [^@]* \n @< // comentário  
+:! >@ \n [^@]* \n @< (comentário)  
 
 
-:[\n\s\t] // quebra de linha, espaço e tab  
+:[\n\s\t] (quebra de linha, espaço e tab)  
 
 
 // Palavras reservadas e símbolos  
@@ -68,19 +72,26 @@ https://gals.sourceforge.net/
 
 1. Crie um arquivo de código-fonte seguindo a gramática definida (por exemplo, programa.txt).
 
-2. Execute o compilador:
+2. Execute o compilador em um prompt de comando:
    ```bash
-   java -jar meu-compilador.jar programa.txt
+   java -jar meu-compilador.jar
    ```
-3. O compilador gerará programa.il na mesma pasta do .txt.
+3. Isso vai abrir o editor de texto do compilador, ai você pode abrir o arquivo criado clicando no botão de abrir ou usando ctrl + o, (ou se quiser pode escrever seu código do zero no editor, ai você deve salvar o arquivo antes de seguir).
 
-4. No Windows, abra o Prompt de Comando e navegue até o diretório com o .il:
+4. Após abrir o seu código escrito em txt, você vai ver o conteúdo dele no editor de texto.
+
+5. Clique em compilar, ou use a hotkey F7, caso tenha erros, ele vai mostrar no terminal do compilador a linha e o erro.
+
+6. Caso não tenha erros ele vai gerar o programa .il com o mesmo nome do arquivo .txt pasta onde estava o arquivo que você abriu ou salvou o arquivo.
+
+7. Agora no prompt de comando do seu computador, na pasta onde está salvo o arquivo use o comando:
+   
 ```bash
-ilasm programa.il
+C:\Windows\Microsoft.NET\Framework64\v4.0.30319\ilasm programa.il
 ```
-5. Isso produzirá programa.exe. Para executar:
+8. Isso produzirá um arquivo programa.exe. Para executar execute o comando no terminal:
 ```bash
-programa.exe
+programa
 ```
 
 ---
