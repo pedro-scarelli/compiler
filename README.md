@@ -7,7 +7,7 @@ Este projeto implementa um compilador completo (léxico, sintático e semântico
 ## 🚀 Funcionalidades
 
 - **Análise Léxica**: Identifica tokens definidos pelas regras de expressões regulares.
-- **Análise Sintática**: Valida a estrutura do programa de acordo com a gramática LL.
+- **Análise Sintática**: Valida a estrutura do programa de acordo com a gramática definida.
 - **Análise Semântica**: Verifica coerência de tipos e regras semânticas.
 - **Geração de Código MSIL**: Emite instruções IL compatíveis com o .NET/CLI.
 
