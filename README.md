@@ -79,6 +79,8 @@ ilasm programa.il
 programa.exe
 ```
 
+---
+
 ## 📝 Exemplo de Uso
 
 ### Arquivo de entrada (area.txt):
