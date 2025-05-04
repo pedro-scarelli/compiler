@@ -61,7 +61,8 @@ delimiter tokens (main, read, write, etc.) e operadores lógicos, relacionais e 
 ```
 
 Para a gramática completa, consulte o arquivo de configuração do GALS (grammar-rules.gals).
-Link para download do GALS: https://gals.sourceforge.net/
+Link para download do GALS:  
+https://gals.sourceforge.net/
 
 ---
 
