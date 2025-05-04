@@ -4,7 +4,7 @@ Este projeto implementa um compilador completo (léxico, sintático e semântico
 
 ### Requisitos:
 
-Java
+Java 17
 
 ---
 
@@ -74,9 +74,9 @@ https://gals.sourceforge.net/
 
 2. Execute o compilador em um prompt de comando:
    ```bash
-   java -jar meu-compilador.jar
+   java -jar compiler.jar
    ```
-3. Isso vai abrir o editor de texto do compilador, ai você pode abrir o arquivo criado clicando no botão de abrir ou usando ctrl + o, (ou se quiser pode escrever seu código do zero no editor, ai você deve salvar o arquivo antes de seguir).
+3. Isso vai abrir o compilador, ai você pode abrir o arquivo criado clicando no botão de abrir ou usando ctrl + o, (ou se quiser pode escrever seu código do zero no editor, ai você deve salvar o arquivo antes de seguir).
 
 4. Após abrir o seu código escrito em txt, você vai ver o conteúdo dele no editor de texto.
 
