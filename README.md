@@ -17,38 +17,36 @@ Este projeto implementa um compilador completo (léxico, sintático e semântico
 
 O compilador foi construído com o GALS e segue a seguinte configuração:
 
-#Options
-GenerateScanner = true
-GenerateParser = true
-Language = Java
-ScannerName = Lexico
-ParserName = Sintatico
-SemanticName = Semantico
-ScannerCaseSensitive = true
-ScannerTable = Compact
-Input = String
-Parser = LL
-#RegularDefinitions
+#Options    
+GenerateScanner = true  
+GenerateParser = true  
+Language = Java  
+ScannerName = Lexico  
+ParserName = Sintatico  
+SemanticName = Semantico  
+ScannerCaseSensitive = true  
+ScannerTable = Compact  
+Input = String  
+Parser = LL  
 
-#Tokens
-// palavra reservada
-pr: [a-z] [a-zA-Z]*
-// identificador
-id:! (i_|f_|b_|s_) ([a-z][A-Z]? | [A-Z]) (([a-z] | [0-9]) [A-Z]?)
-// constante inteira
-cte: [1-9] [0-9]* | 0
-// constante float
-cte_2: ([1-9][0-9]* | 0) , 0-9*
-// constante string
-ct: " ([^\n"%](%x))* "
 
-// comentário
-:! >@ \n [^@]* \n @<
+#RegularDefinitions  
 
-// quebra de linha, espaço e tab
-:[\n\s\t]
+#Tokens    
+pr: [a-z] [a-zA-Z]* // palavra reservada  
+id:! (i_|f_|b_|s_) ([a-z][A-Z]? | [A-Z]) (([a-z] | [0-9]) [A-Z]?) // identificador  
+cte: [1-9] [0-9]* | 0 // constante inteira  
+cte_2: ([1-9][0-9]* | 0) , 0-9* // constante float  
+ct: " ([^\n"%](%x))* " // constante string  
 
-// Palavras reservadas e símbolos
+
+:! >@ \n [^@]* \n @< // comentário  
+
+
+:[\n\s\t] // quebra de linha, espaço e tab  
+
+
+// Palavras reservadas e símbolos  
 delimiter tokens (main, read, write, etc.) e operadores lógicos, relacionais e aritméticos.
 
 ### Não-Terminais
