@@ -1,15 +1,18 @@
 # Compilador de Código-Fonte para MSIL
 
-Este projeto implementa um compilador completo (léxico, sintático e semântico) que lê um arquivo de código-fonte (`.txt`), gera um código-objeto em MSIL (`.il`) e, em seguida, permite a conversão para um executável (`.exe`) no Windows.
+Este projeto implementa um compilador completo (análise léxico, sintática e semântica) que lê um arquivo de código-fonte (`.txt`), gera um código-objeto em MSIL (`.il`) e, em seguida, permite a conversão para um executável (`.exe`) no Windows.
 
 ### Requisitos:
 
-Java 17
+Java 17 ou superior
 
 ---
 
 ## 🚀 Funcionalidades
 
+- **Editor de Texto**: Interface com recursos de criação, abertura, edição e salvamento de arquivos de código.
+- **Terminal de Feedback**: Exibe mensagens de erro ou de sucesso.
+- **Gerenciador de Arquivos**: Navegação no sistema para selecionar e salvar arquivos-fonte.
 - **Análise Léxica**: Identifica tokens definidos pelas regras de expressões regulares.
 - **Análise Sintática**: Valida a estrutura do programa de acordo com a gramática LL.
 - **Análise Semântica**: Verifica coerência de tipos e regras semânticas.
@@ -17,7 +20,7 @@ Java 17
 
 ---
 
-## 📚 Gramática e Regras
+## 📚 Gramática e Configuração (GALS)
 
 O compilador foi construído com o GALS e segue a seguinte configuração:
 
