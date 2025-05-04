@@ -65,12 +65,12 @@ delimiter tokens (main, read, write, etc.) e operadores lógicos, relacionais e 
 ...
 ```
 
-Para a gramática completa, consulte o arquivo de configuração do GALS (grammar-rules.gals).
-Para usar o GALS, rode o seguinte comando na raíz do projeto:  
+Para a gramática completa, consulte o arquivo de configuração do GALS 'grammar-rules.gals' na pasta 'gals'.
+Para usar o GALS, rode o seguinte comando na pasta 'gals':  
 ```bash
 java -jar gals.jar
 ```
-Em seguida caso queira verificar as gramáticas no programa, abra o arquivo grammar-rules.gals.
+Em seguida caso queira verificar as gramáticas no programa, abra o arquivo 'grammar-rules.gals' que também está na pasta 'gals'.
 
 Documentação do GALS: https://gals.sourceforge.net/
 
