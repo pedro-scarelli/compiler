@@ -17,7 +17,7 @@ Este projeto implementa um compilador completo (léxico, sintático e semântico
 
 O compilador foi construído com o GALS e segue a seguinte configuração:
 
-#Options    
+### Options    
 GenerateScanner = true  
 GenerateParser = true  
 Language = Java  
@@ -30,9 +30,7 @@ Input = String
 Parser = LL  
 
 
-#RegularDefinitions  
-
-#Tokens    
+### Tokens    
 pr: [a-z] [a-zA-Z]* // palavra reservada  
 id:! (i_|f_|b_|s_) ([a-z][A-Z]? | [A-Z]) (([a-z] | [0-9]) [A-Z]?) // identificador  
 cte: [1-9] [0-9]* | 0 // constante inteira  
