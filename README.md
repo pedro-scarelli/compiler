@@ -7,7 +7,7 @@ Este projeto implementa um compilador completo (léxico, sintático e semântico
 ## 🚀 Funcionalidades
 
 - **Análise Léxica**: Identifica tokens definidos pelas regras de expressões regulares.
-- **Análise Sintática**: Valida a estrutura do programa de acordo com a gramática definida.
+- **Análise Sintática**: Valida a estrutura do programa de acordo com a gramática LL.
 - **Análise Semântica**: Verifica coerência de tipos e regras semânticas.
 - **Geração de Código MSIL**: Emite instruções IL compatíveis com o .NET/CLI.
 
@@ -31,14 +31,21 @@ Parser = LL
 #RegularDefinitions
 
 #Tokens
+// palavra reservada
 pr: [a-z] [a-zA-Z]*
+// identificador
 id:! (i_|f_|b_|s_) ([a-z][A-Z]? | [A-Z]) (([a-z] | [0-9]) [A-Z]?)
+// constante inteira
 cte: [1-9] [0-9]* | 0
+// constante float
 cte_2: ([1-9][0-9]* | 0) , 0-9*
+// constante string
 ct: " ([^\n"%](%x))* "
 
+// comentário
 :! >@ \n [^@]* \n @<
 
+// quebra de linha, espaço e tab
 :[\n\s\t]
 
 // Palavras reservadas e símbolos
