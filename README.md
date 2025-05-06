@@ -1,6 +1,6 @@
 # Compilador de Código-Fonte para MSIL
 
-Este projeto implementa um compilador completo (análise léxico, sintática e semântica) que lê um arquivo de código-fonte (`.txt`), gera um código-objeto em MSIL (`.il`) e, em seguida, permite a conversão para um executável (`.exe`) no Windows.
+Este projeto implementa um compilador completo (análise léxica, sintática e semântica) que lê um arquivo de código-fonte (`.txt`), gera um código-objeto em MSIL (`.il`) e, em seguida, permite a conversão para um executável (`.exe`) no Windows.
 
 ### Requisitos:
 
